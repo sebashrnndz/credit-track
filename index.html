@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Gastos de Tarjeta de Crédito</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gastos de Tarjeta</h1>
+        
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="summary">Resumen</button>
+                <button class="tab-button" data-tab="register">Registrar Gasto</button>
+                <button class="tab-button" data-tab="pending">Cuotas Pendientes</button>
+                <button class="tab-button" data-tab="completed">Pagos Completados</button>
+            </div>
+            
+            <!-- Tab Content -->
+            <div class="tab-content active" id="summary-tab">
+                <div class="nearest-payment-container card">
+                    <h2>Próximo Pago</h2>
+                    <div id="nearest-payment-summary"></div>
+                </div>
+                
+                <div class="summary-container card">
+                    <h2>Resumen de Deuda</h2>
+                    <div id="debt-summary"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="register-tab">
+                <div class="card">
+                    <h2>Nuevo Gasto</h2>
+                    <form id="expense-form">
+                        <div class="form-group">
+                            <label for="expense-name">Nombre del Gasto:</label>
+                            <input type="text" id="expense-name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-amount">Monto Total:</label>
+                            <input type="number" id="expense-amount" min="1" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="expense-installments">Cantidad de Cuotas:</label>
+                            <input type="number" id="expense-installments" min="1" max="60" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="payment-start-date">Fecha de Inicio de Pago:</label>
+                            <input type="date" id="payment-start-date" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Registrar Gasto</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="pending-tab">
+                <div class="expenses-container">
+                    <h2>Gastos Activos</h2>
+                    <div id="expenses-list"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="completed-tab">
+                <div class="expenses-container">
+                    <h2>Gastos Completados</h2>
+                    <div id="completed-expenses-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Registrar Pago</h2>
+            <div id="payment-details"></div>
+            <button id="confirm-payment" class="btn-primary">Confirmar Pago</button>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-delete">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <div id="delete-details"></div>
+            <div class="modal-buttons">
+                <button id="cancel-delete" class="btn-secondary">Cancelar</button>
+                <button id="confirm-delete" class="btn-danger">Eliminar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
