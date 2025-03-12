@@ -183,21 +183,33 @@ function renderExpenses() {
     const pendingAmount = expense.amount - paidAmount
 
     // Create the header (always visible)
-    const expenseHeader = document.createElement("div")
-    expenseHeader.className = allPaid ? "completed-expense-header" : "expense-header"
-    expenseHeader.innerHTML = `
-            <div class="expense-title-container">
-                <span class="expense-toggle">▶</span>
-                <div class="expense-title">${expense.name}</div>
-            </div>
-            <div class="expense-summary">
-                <div class="expense-summary-item">Cuotas: ${paidInstallments}/${totalInstallments}</div>
-                <div class="expense-summary-item">${allPaid ? "Pagado: $" + formatCurrency(expense.amount) : "Pendiente: $" + formatCurrency(pendingAmount)}</div>
-                <div class="expense-actions">
-                    <button class="delete-button" onclick="confirmDeleteExpense('${expense.id}', event)">Eliminar</button>
-                </div>
-            </div>
-        `
+    // Dentro de la función renderExpenses(), reemplaza la creación del expenseHeader con esto:
+const expenseHeader = document.createElement("div")
+expenseHeader.className = allPaid ? "completed-expense-header" : "expense-header"
+
+// Calcula el porcentaje de progreso
+const progressPercentage = (paidInstallments / totalInstallments) * 100
+
+expenseHeader.innerHTML = `
+  <div class="expense-title-container">
+    <span class="expense-toggle">▶</span>
+    <div class="expense-title">${expense.name}</div>
+  </div>
+  <div class="expense-summary">
+    <div class="progress-container">
+      <div class="progress-text">Cuotas: ${paidInstallments}/${totalInstallments}</div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+      </div>
+    </div>
+    <div class="expense-amount">${
+      allPaid ? "Pagado: $" + formatCurrency(expense.amount) : "Pendiente: $" + formatCurrency(pendingAmount)
+    }</div>
+    <div class="expense-actions">
+      <button class="delete-button" onclick="confirmDeleteExpense('${expense.id}', event)">Eliminar</button>
+    </div>
+  </div>
+`
 
     // Create the content (collapsible)
     const expenseContent = document.createElement("div")
@@ -277,19 +289,19 @@ function renderInstallments(expense) {
       }
 
       return `
-            <tr>
-                <td>Cuota ${installment.number}</td>
-                <td>${formattedDueDate}</td>
-                <td>$${formatCurrency(Number.parseFloat(installment.amount))}</td>
-                <td>${status}${paymentInfo}</td>
-                <td>
-                    <button class="pay-button" ${buttonState} 
-                        onclick="openPaymentModal('${expense.id}', ${installment.number - 1})">
-                        ${installment.paid ? "Pagado" : "Pagar"}
-                    </button>
-                </td>
-            </tr>
-        `
+        <tr>
+          <td class="installments-table-header" data-label="Cuota">Cuota ${installment.number}</td>
+          <td data-label="Vencimiento">${formattedDueDate}</td>
+          <td data-label="Monto">$${formatCurrency(Number.parseFloat(installment.amount))}</td>
+          <td data-label="Estado">${status}${paymentInfo}</td>
+          <td>
+            <button class="pay-button" ${buttonState} 
+              onclick="openPaymentModal('${expense.id}', ${installment.number - 1})">
+              ${installment.paid ? "Pagado" : "Pagar"}
+            </button>
+          </td>
+        </tr>
+      `
     })
     .join("")
 }
@@ -499,11 +511,12 @@ function openPaymentModal(expenseId, installmentIndex) {
   const dueDate = new Date(installment.dueDate)
 
   paymentDetails.innerHTML = `
-        <p><strong>Gasto:</strong> ${expense.name}</p>
-        <p><strong>Cuota:</strong> ${installment.number} de ${expense.installmentsCount}</p>
-        <p><strong>Monto:</strong> $${formatCurrency(Number.parseFloat(installment.amount))}</p>
-        <p><strong>Vencimiento:</strong> ${dueDate.toLocaleDateString()}</p>
-        <p><strong>Fecha de Pago:</strong> ${new Date().toLocaleDateString()}</p>
+        <p class="detail-to-pay"><strong>Gasto:</strong> ${expense.name}</p>
+        <p class="detail-to-pay"><strong>Cuota:</strong> ${installment.number} de ${expense.installmentsCount}</p>
+        <p class="detail-to-pay"><strong>Monto:</strong> $${formatCurrency(Number.parseFloat(installment.amount))}</p>
+        <p class="detail-to-pay"><strong>Vencimiento:</strong> ${dueDate.toLocaleDateString()}</p>
+        <p class="detail-to-pay"><strong>Fecha de Pago:</strong> ${new Date().toLocaleDateString()}</p>
+        <p class="advert"> Una vez confirmado no podrás revertir este pago.</p>
     `
 
   paymentModal.style.display = "block"

@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
 * {
@@ -15,31 +14,39 @@ body {
 }
 
 .container {
-  max-width: 900px; /* Reduced from 1200px */
+  max-width: 900px;
+  /* Reduced from 1200px */
   margin: 0 auto;
-  padding: 15px; /* Reduced from 20px for mobile */
+  padding: 15px;
+  /* Reduced from 20px for mobile */
 }
 
 h1 {
   text-align: center;
-  margin: 15px 0; /* Reduced from 30px */
+  margin: 15px 0;
+  /* Reduced from 30px */
   color: #2c3e50;
-  font-size: 1.5rem; /* Reduced from default size */
+  font-size: 1.5rem;
+  /* Reduced from default size */
   font-weight: 600;
 }
 
 h2 {
   color: #2c3e50;
-  margin-bottom: 15px; /* Reduced from 20px */
-  font-size: 1.25rem; /* Slightly smaller */
+  margin-bottom: 15px;
+  /* Reduced from 20px */
+  font-size: 1.25rem;
+  /* Slightly smaller */
 }
 
 .card {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 15px; /* Reduced from 20px */
-  margin-bottom: 15px; /* Reduced from 20px */
+  padding: 15px;
+  /* Reduced from 20px */
+  margin-bottom: 15px;
+  /* Reduced from 20px */
 }
 
 .form-group {
@@ -68,6 +75,7 @@ input {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 5px;
   transition: background-color 0.3s;
 }
 
@@ -131,7 +139,7 @@ input {
 
 .summary-amount {
 
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   color: #A50E0E;
 }
 
@@ -164,7 +172,8 @@ input {
   display: inline-block;
   margin-right: 8px;
   transition: transform 0.3s ease;
-  font-size: 9px; /* Reduced size */
+  font-size: 9px;
+  /* Reduced size */
 }
 
 .monthly-payment-toggle.open {
@@ -179,7 +188,7 @@ input {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease;
   background-color: #f8f9fa;
   border-radius: 4px;
   margin: 0 0 0 15px;
@@ -187,7 +196,8 @@ input {
 }
 
 .monthly-payment-details.open {
-  max-height: 500px; /* Adjust based on expected content height */
+  max-height: 500px;
+  /* Adjust based on expected content height */
   opacity: 1;
   padding: 10px 20px;
 }
@@ -276,7 +286,8 @@ input {
 
 .expense-toggle {
   margin-right: 10px;
-  font-size: 9px; /* Reduced size */
+  font-size: 9px;
+  /* Reduced size */
   transition: transform 0.3s ease;
 }
 
@@ -302,11 +313,12 @@ input {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease;
 }
 
 .expense-content.open {
-  max-height: 1000px; /* Adjust based on expected content height */
+  max-height: 1000px;
+  /* Adjust based on expected content height */
   opacity: 1;
   padding: 20px;
 }
@@ -344,15 +356,22 @@ input {
 }
 
 .status-pending {
-  color: #e74c3c;
+  color: #A50E0E;
+  font-weight: 500;
 }
 
 .status-paid {
-  color: #27ae60;
+  font-weight: 500;
+  color: #137333;
+}
+
+.payment-date {
+  font-size: 0.7rem;
+  font-weight: 500;
 }
 
 .pay-button {
-  background-color: #2ecc71;
+  background-color: #01335f;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -362,12 +381,12 @@ input {
 }
 
 .pay-button:hover {
-  background-color: #27ae60;
+  background-color: #023C70;
 }
 
 .pay-button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
+  background-color: #888888;
+  /* cursor: not-allowed; */
 }
 
 /* Modal styles */
@@ -399,6 +418,7 @@ input {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -483,11 +503,11 @@ input {
 }
 
 .tab-button.active {
-  background-color: #fff;
+  /* background-color: #fff; */
   color: #023C70;
   border-bottom: 2px solid #023C70;
   border-top: 2px solid #023C70;
-  background-color: #cfcfcf;
+  background-color: #f0f0f0;
 }
 
 .tab-content {
@@ -501,8 +521,111 @@ input {
   display: block;
 }
 
+/* Progress bar styles */
+.progress-container {
+  flex: 1;
+  max-width: 200px;
+  margin: 0 15px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: #b9b9b9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #023C70;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.expense-amount {
+  font-weight: 500;
+  color: #A50E0E;
+  white-space: nowrap;
+}
+
+.installments-table-header {
+  font-weight: 600;
+  color: #01335f;
+}
+.advert {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #A50E0E;
+  margin-top: 5px;
+}
+.detail-to-pay{
+  margin-top: 5px;
+}
+
+/* Ajustes para la vista móvil */
+
 /* Responsive tabs */
 @media (max-width: 768px) {
+  .btn-primary {
+    margin-top: 20px;
+    width: 100%;
+    padding: 5px 5px;
+  }
+
+  .installments-table-header {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #01335f;
+  }
+
+  .expense-header {
+    flex-direction: column;
+    padding: 12px 15px;
+    gap: 12px;
+  }
+
+  .expense-title-container {
+    width: 100%;
+  }
+
+  .expense-summary {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-left: 24px;
+    /* Align with the title considering the toggle arrow */
+  }
+
+  .progress-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .progress-text {
+    margin-bottom: 4px;
+  }
+
+  .expense-amount {
+    width: 100%;
+  }
+
+  .expense-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .delete-button {
+    margin-left: 0;
+  }
+
   .container {
     padding: 10px;
   }
@@ -527,43 +650,109 @@ input {
 
   .tab-button {
     width: 100%;
-    padding: 12px 15px; /* Reduced padding */
+    padding: 12px 15px;
+    /* Reduced padding */
     border-bottom: 1px solid #eee;
   }
 
   .expense-header {
     flex-direction: column;
     align-items: flex-start;
-    padding: 12px 15px; /* Reduced padding */
+    padding: 12px 15px;
+    /* Reduced padding */
   }
 
   .expense-summary {
     margin-top: 8px;
     flex-wrap: wrap;
-    gap: 8px; /* Reduced gap */
+    gap: 8px;
+    /* Reduced gap */
   }
 
   .expense-content.open {
-    padding: 15px; /* Reduced padding */
+    max-height: 2000px;
+    /* Aumentado de 1000px a 2000px */
+    opacity: 1;
+    padding: 20px;
   }
 
   .summary-grid {
     grid-template-columns: 1fr;
-    gap: 10px; /* Reduced gap */
+    gap: 10px;
+    /* Reduced gap */
   }
 
   .monthly-payment-details.open {
-    padding: 8px 15px; /* Reduced padding */
+    max-height: 2000px;
+    /* Aumentado de 500px a 2000px */
+    opacity: 1;
+    padding: 10px 20px;
   }
+
+  /* Agregar estilos responsivos para la tabla */
 
   .installments-table {
-    font-size: 13px; /* Slightly smaller font */
+    display: block;
+    width: 100%;
   }
 
-  .installments-table th,
-  .installments-table td {
-    padding: 8px; /* Reduced padding */
+  .installments-table thead {
+    display: none;
+    /* Ocultar encabezados en móvil */
   }
+
+  .installments-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .installments-table tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f8f9fa;
+  }
+
+  .installments-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border: none;
+    font-size: 14px;
+  }
+
+  .installments-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #666;
+  }
+
+  /* Ajustes específicos para el botón de pago */
+  .installments-table td:last-child {
+    justify-content: flex-end;
+    padding-top: 12px;
+    margin-top: 8px;
+    border-top: 1px solid #eee;
+  }
+
+  .installments-table td:last-child::before {
+    display: none;
+  }
+
+  .pay-button {
+    background-color: #01335f;
+    width: 100%;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .pay-button:hover {
+    background-color: #01335f;
+  }
+
 
   /* Improve button sizes for mobile */
   .pay-button,
@@ -599,7 +788,7 @@ input {
 }
 
 .delete-button {
-  background-color: #e74c3c;
+  background-color: #A50E0E;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -611,7 +800,7 @@ input {
 }
 
 .delete-button:hover {
-  background-color: #c0392b;
+  background-color: #830c0c;
 }
 
 .expense-actions {
@@ -682,6 +871,6 @@ input {
 
   .summary-amount {
     font-size: 1.1rem;
+    font-weight: 500;
   }
 }
-
