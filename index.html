@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Gastos de Tarjeta de Crédito</title>
-    <link rel="icon" href="https://img.icons8.com/external-kosonicon-outline-kosonicon/64/external-finance-insurance-kosonicon-outline-kosonicon-2.png" type="image/x-icon">
+    <link rel="icon"
+        href="https://img.icons8.com/external-kosonicon-outline-kosonicon/64/external-finance-insurance-kosonicon-outline-kosonicon-2.png"
+        type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <div class="container">
-        <h1>Gastos de Tarjeta</h1>
-        
+        <div class="app-header">
+            <a href="app.html" class="back-button">Inicio</a>
+            <h1>Gastos de Tarjeta</h1>
+            <div class="header-actions">
+                <a href="planificacion.html" class="card-button">Planificación</a>
+            </div>
+        </div>
         <div class="tabs-container">
             <div class="tabs">
                 <button class="tab-button active" data-tab="summary">Resumen</button>
@@ -18,20 +27,20 @@
                 <button class="tab-button" data-tab="pending">Cuotas Pendientes</button>
                 <button class="tab-button" data-tab="completed">Pagos Completados</button>
             </div>
-            
+
             <!-- Tab Content -->
             <div class="tab-content active" id="summary-tab">
                 <div class="nearest-payment-container card">
                     <h2>Próximo Pago</h2>
                     <div id="nearest-payment-summary"></div>
                 </div>
-                
+
                 <div class="summary-container card">
                     <h2>Resumen de Deuda</h2>
                     <div id="debt-summary"></div>
                 </div>
             </div>
-            
+
             <div class="tab-content" id="register-tab">
                 <div class="card">
                     <h2>Nuevo Gasto</h2>
@@ -40,34 +49,34 @@
                             <label for="expense-name">Nombre del Gasto:</label>
                             <input type="text" id="expense-name" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="expense-amount">Monto Total:</label>
                             <input type="number" id="expense-amount" min="1" step="0.01" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="expense-installments">Cantidad de Cuotas:</label>
                             <input type="number" id="expense-installments" min="1" max="60" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="payment-start-date">Fecha de Inicio de Pago:</label>
                             <input type="date" id="payment-start-date" required>
                         </div>
-                        
+
                         <button type="submit" class="btn-primary">Registrar Gasto</button>
                     </form>
                 </div>
             </div>
-            
+
             <div class="tab-content" id="pending-tab">
                 <div class="expenses-container">
                     <h2>Gastos Activos</h2>
                     <div id="expenses-list"></div>
                 </div>
             </div>
-            
+
             <div class="tab-content" id="completed-tab">
                 <div class="expenses-container">
                     <h2>Gastos Completados</h2>
@@ -86,7 +95,7 @@
             <button id="confirm-payment" class="btn-primary">Confirmar Pago</button>
         </div>
     </div>
-    
+
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="modal">
         <div class="modal-content">
@@ -99,8 +108,8 @@
             </div>
         </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
-</html>
 
+</html>

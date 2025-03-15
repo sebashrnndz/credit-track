@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificación de Gastos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="app-header">
+            <a type="button" href="app.html" class="back-button">Inicio</a>
+            <h1>Planificación General</h1>
+            <div class="header-actions">
+                <a href="index.html" class="card-button">Tarjeta de crédito</a>
+            </div>
+        </div>
+        
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="summary">Resumen</button>
+                <button class="tab-button" data-tab="income">Ingresos</button>
+                <button class="tab-button" data-tab="balance">Saldo Disponible</button>
+                <button class="tab-button" data-tab="register">Registrar Gasto</button>
+                <button class="tab-button" data-tab="pending">Gastos Pendientes</button>
+                <button class="tab-button" data-tab="completed">Gastos Completados</button>
+            </div>
+            
+            <!-- Tab Content -->
+            <div class="tab-content active" id="summary-tab">
+                <div class="planning-summary-container card">
+                    <h2>Resumen de Gastos Planificados</h2>
+                    <div id="planning-summary"></div>
+                </div>
+                
+                <div class="total-expenses-container card">
+                    <h2>Resumen Financiero Total</h2>
+                    <div id="total-expenses-summary"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="income-tab">
+                <div class="card">
+                    <h2>Gestión de Ingresos Mensuales</h2>
+                    <form id="income-form">
+                        <div class="form-group">
+                            <label for="income-month">Mes:</label>
+                            <input type="month" id="income-month" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="monthly-income">Sueldo Base:</label>
+                            <input type="number" id="monthly-income" min="1" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="income-notes">Notas sobre ingresos (opcional):</label>
+                            <textarea id="income-notes" rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary planning-btn">Guardar Sueldo</button>
+                    </form>
+                    
+                    <div class="extra-income-section">
+                        <h3>Ingresos Extras</h3>
+                        <form id="extra-income-form">
+                            <div class="form-group">
+                                <label for="extra-income-month">Mes:</label>
+                                <input type="month" id="extra-income-month" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="extra-income-description">Descripción:</label>
+                                <input type="text" id="extra-income-description" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="extra-income-amount">Monto:</label>
+                                <input type="number" id="extra-income-amount" min="1" step="0.01" required>
+                            </div>
+                            
+                            <button type="submit" class="btn-primary planning-btn">Agregar Ingreso Extra</button>
+                        </form>
+                    </div>
+                    
+                    <div class="income-history">
+                        <h3>Historial de Ingresos</h3>
+                        <div id="income-history-list"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="balance-tab">
+                <div class="card">
+                    <h2>Saldo Disponible Mensual</h2>
+                    <div id="income-summary"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="register-tab">
+                <div class="card">
+                    <h2>Nuevo Gasto Planificado</h2>
+                    <form id="planning-form">
+                        <div class="form-group">
+                            <label for="planning-name">Descripción del Gasto:</label>
+                            <input type="text" id="planning-name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-amount">Monto Estimado:</label>
+                            <input type="number" id="planning-amount" min="1" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-category">Categoría:</label>
+                            <select id="planning-category" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="hogar">Hogar</option>
+                                <option value="transporte">Transporte</option>
+                                <option value="alimentacion">Alimentación</option>
+                                <option value="salud">Salud</option>
+                                <option value="educacion">Educación</option>
+                                <option value="entretenimiento">Entretenimiento</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-priority">Prioridad:</label>
+                            <select id="planning-priority" required>
+                                <option value="">Seleccionar prioridad</option>
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-date">Fecha Estimada:</label>
+                            <input type="date" id="planning-date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-notes">Notas Adicionales:</label>
+                            <textarea id="planning-notes" rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary planning-btn">Registrar Gasto</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="pending-tab">
+                <div class="expenses-container">
+                    <h2>Gastos Pendientes</h2>
+                    <div class="planning-filters">
+                        <div class="filter-group">
+                            <label for="filter-category">Filtrar por Categoría:</label>
+                            <select id="filter-category">
+                                <option value="todos">Todos</option>
+                                <option value="hogar">Hogar</option>
+                                <option value="transporte">Transporte</option>
+                                <option value="alimentacion">Alimentación</option>
+                                <option value="salud">Salud</option>
+                                <option value="educacion">Educación</option>
+                                <option value="entretenimiento">Entretenimiento</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-priority">Filtrar por Prioridad:</label>
+                            <select id="filter-priority">
+                                <option value="todos">Todos</option>
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                        </div>
+                        <button id="apply-filters" class="btn-secondary">Aplicar Filtros</button>
+                    </div>
+                    <div id="planning-pending-list"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="completed-tab">
+                <div class="expenses-container">
+                    <h2>Gastos Completados</h2>
+                    <div id="planning-completed-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="planning-delete-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-delete">&times;</span>
+            <h2>Confirmar Eliminación</h2>
+            <div id="planning-delete-details"></div>
+            <div class="modal-buttons">
+                <button id="planning-cancel-delete" class="btn-secondary">Cancelar</button>
+                <button id="planning-confirm-delete" class="btn-danger">Eliminar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content success-modal-content">
+            <span class="close-success">&times;</span>
+            <div class="success-icon">✓</div>
+            <h2 id="success-title">Operación Exitosa</h2>
+            <p id="success-message">La operación se ha completado correctamente.</p>
+            <button id="success-ok" class="btn-primary">Aceptar</button>
+        </div>
+    </div>
+    
+    <script src="planificacion.js"></script>
+</body>
+</html>
+

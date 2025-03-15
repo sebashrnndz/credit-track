@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Finanzas Personales</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Welcome Container (shown to returning users) -->
+  <div class="welcome-container">
+      <h1 class="welcome-title">Sistema de Finanzas Personales</h1>
+      <p class="welcome-subtitle">Administra tus gastos y planifica tu futuro financiero de manera fácil y eficiente</p>
+      
+      <div class="features-container">
+          <div class="feature-card">
+              <div class="feature-icon">📊</div>
+              <h3 class="feature-title">Seguimiento de Gastos</h3>
+              <p class="feature-description">Registra y monitorea todos tus gastos de tarjeta de crédito</p>
+          </div>
+          
+          <div class="feature-card">
+              <div class="feature-icon">📅</div>
+              <h3 class="feature-title">Planificación Financiera</h3>
+              <p class="feature-description">Planifica tus gastos futuros y visualiza tu situación mes a mes</p>
+          </div>
+          
+          <div class="feature-card">
+              <div class="feature-icon">💰</div>
+              <h3 class="feature-title">Control de Ingresos</h3>
+              <p class="feature-description">Administra tu sueldo e ingresos extra para un mejor presupuesto</p>
+          </div>
+      </div>
+      
+      <div class="app-buttons">
+        <a href="planificacion.html" class="app-button primary-button">Empezar a usar</a>
+        <a href="#" class="app-button secondary-button" id="welcome-start-tour">Cómo Funciona</a>
+      </div>
+  </div>
+  
+  <!-- Tour Welcome Container (shown to new users) -->
+  <div class="tour-container">
+      <div class="tour-welcome">
+          <h1 class="welcome-title">¡Bienvenido a tu Sistema de Finanzas Personales!</h1>
+          <p class="welcome-subtitle">Parece que es tu primera vez aquí. Te guiaremos a través de las principales funcionalidades.</p>
+          
+          <div class="tour-illustration">
+              <img src="https://via.placeholder.com/300x200/023C70/FFFFFF?text=Finanzas+Personales" alt="Ilustración de finanzas personales">
+          </div>
+          
+          <p class="tour-description">
+              Este sistema te ayudará a:
+          </p>
+          
+          <div class="tour-benefits">
+              <div class="benefit-item">
+                  <div class="benefit-icon">✅</div>
+                  <div class="benefit-text">Registrar y controlar tus ingresos mensuales</div>
+              </div>
+              <div class="benefit-item">
+                  <div class="benefit-icon">✅</div>
+                  <div class="benefit-text">Planificar tus gastos futuros y establecer prioridades</div>
+              </div>
+              <div class="benefit-item">
+                  <div class="benefit-icon">✅</div>
+                  <div class="benefit-text">Administrar tus gastos de tarjeta de crédito y cuotas</div>
+              </div>
+              <div class="benefit-item">
+                  <div class="benefit-icon">✅</div>
+                  <div class="benefit-text">Visualizar tu situación financiera mes a mes</div>
+              </div>
+          </div>
+          
+          <div class="tour-actions">
+              <button id="start-tour" class="app-button primary-button">Comenzar Tour Guiado</button>
+              <button id="skip-tour" class="app-button secondary-button">Saltar e Ir a la Aplicación</button>
+          </div>
+      </div>
+  </div>
+  
+  <!-- Tour Modal -->
+  <div id="tour-modal" class="modal tour-modal">
+      <div class="modal-content tour-modal-content">
+          <span id="tour-close" class="close">&times;</span>
+          <h2 id="tour-title">Título del Paso</h2>
+          <div class="tour-progress-container">
+              <div class="tour-progress-bar">
+                  <div id="tour-progress" class="tour-progress"></div>
+              </div>
+              <div id="tour-step" class="tour-step-indicator">Paso 1 de 6</div>
+          </div>
+          <div id="tour-content" class="tour-content">
+              <!-- Content will be dynamically inserted here -->
+          </div>
+          <div class="tour-navigation">
+              <button id="tour-prev" class="btn-secondary">Anterior</button>
+              <button id="tour-next" class="btn-primary">Siguiente</button>
+          </div>
+      </div>
+  </div>
+  
+  <!-- Tour Highlight Element -->
+  <div id="tour-highlight" class="tour-highlight"></div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
+

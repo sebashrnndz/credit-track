@@ -16,6 +16,14 @@ const deleteDetails = document.getElementById("delete-details")
 const confirmDelete = document.getElementById("confirm-delete")
 const cancelDelete = document.getElementById("cancel-delete")
 
+function checkForPassedData() {
+  const lastVisit = localStorage.getItem('lastVisit');
+  if (lastVisit) {
+    console.log('Last visit:', new Date(lastVisit));
+    // You can use this data if needed
+  }
+}
+
 // Global variables
 let expenses = JSON.parse(localStorage.getItem("expenses")) || []
 let currentInstallment = null
@@ -28,6 +36,9 @@ function formatCurrency(amount) {
 
 // Initialize the app
 function init() {
+  // Check for data passed from landing page
+  checkForPassedData();
+
   // Set default payment start date to today
   document.getElementById("payment-start-date").valueAsDate = new Date()
 
