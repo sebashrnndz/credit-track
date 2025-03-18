@@ -2063,12 +2063,369 @@ textarea {
   background-color: #012b50;
 }
 
+/* Añadir estilos para gastos fijos y el formulario */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.styled-checkbox {
+  margin-right: 10px;
+}
+
+.fixed-expense-options {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 5px;
+  border-left: 3px solid #3498db;
+}
+
+.fixed-expense-duration {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fixed-expense-duration input {
+  width: 80px;
+}
+
+.fixed-expense-info {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 10px;
+}
+
+.fixed-expense-badge {
+  background-color: #3498db;
+  color: white;
+  font-size: 0.7em;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.edit-button {
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 5px;
+  transition: background-color 0.3s;
+}
+
+.edit-button:hover {
+  background-color: #e67e22;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+}
+
+.radio-option input[type="radio"] {
+  margin-right: 10px;
+}
+
+.edit-fixed-expense-form {
+  margin-top: 15px;
+}
+
+.checkbox-container {
+  margin: 15px 0;
+}
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  font-weight: normal;
+  padding-left: 0;
+  user-select: none;
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  position: relative;
+  height: 22px;
+  width: 22px;
+  background-color: #fff;
+  border: 2px solid #3498db;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-checkbox:hover input ~ .checkmark {
+  background-color: #f0f7fc;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #3498db;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.custom-checkbox .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-label {
+  margin-left: 10px;
+  font-size: 16px;
+}
+
+.recurring-options {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #3498db;
+  margin-left: 5px;
+}
+
+.recurring-options.show {
+  max-height: 150px;
+  opacity: 1;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.recurring-duration {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.recurring-input-group {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.recurring-unit {
+  margin-left: 10px;
+  font-weight: 500;
+}
+
+.recurring-info {
+  color: #666;
+  font-size: 14px;
+  font-style: italic;
+  margin: 5px 0 0 0;
+}
+
+#recurring-months {
+  width: 70px;
+  text-align: center;
+}
+.pending-expenses-list .expense-card {
+  padding: 0;
+  margin-bottom: 12px;
+  border-left: 4px solid #3498db;
+}
+
+.pending-expenses-list .expense-header {
+  padding: 10px 15px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.pending-expenses-list .expense-title-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-expenses-list .expense-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.pending-expenses-list .expense-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.pending-expenses-list .expense-summary-item {
+  margin: 0;
+}
+
+.pending-expenses-list .expense-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.pending-expenses-list .priority-badge {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: white;
+}
+
+.pending-expenses-list .priority-badge.alta {
+  background-color: #e74c3c;
+}
+
+.pending-expenses-list .priority-badge.media {
+  background-color: #f39c12;
+}
+
+.pending-expenses-list .priority-badge.baja {
+  background-color: #27ae60;
+}
+
+.pending-expenses-list .complete-button,
+.pending-expenses-list .delete-button {
+  padding: 5px 10px;
+  font-size: 13px;
+  white-space: nowrap;
+}
 /* Media queries para la página de bienvenida */
 
 /* Ajustes para la vista móvil */
 
 /* Responsive tabs */
 @media (max-width: 768px) {
+  .category-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+  }
+  
+  .category-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .pending-expenses-list .expense-card {
+    margin-bottom: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  
+  .pending-expenses-list .expense-header {
+    padding: 8px 10px;
+  }
+  
+  .pending-expenses-list .expense-title-container {
+    margin-bottom: 5px;
+  }
+  .monthly-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .monthly-date {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  .pending-expenses-list .expense-header {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .pending-expenses-list .expense-summary {
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .pending-expenses-list .expense-actions {
+    margin-top: 8px;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .container {
+    padding: 10px 8px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .card {
+    padding: 12px 10px;
+    margin-bottom: 12px;
+  }
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+  
+  .tabs {
+    margin-left: -8px;
+    margin-right: -8px;
+    width: calc(100% + 16px);
+  }
+  
+  .tab-button {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+  
+  .tab-content {
+    padding: 15px 10px;
+  }
+  
+  .expense-header {
+    padding: 12px 10px;
+  }
+  
+  .expense-content.open {
+    padding: 12px 10px;
+  }
+
   .app-header {
     flex-direction: column;
     align-items: center;
@@ -2535,6 +2892,8 @@ textarea {
   .expense-header {
     flex-direction: column;
     align-items: flex-start;
+    padding: 4px 8px;
+    font-size: 12px;
   }
 
   .expense-actions {
@@ -2577,5 +2936,17 @@ textarea {
   .summary-amount {
     font-size: 1.1rem;
     font-weight: 500;
+  }
+}
+@media (max-width: 480px) {
+  .pending-expenses-list .expense-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .pending-expenses-list .complete-button,
+  .pending-expenses-list .delete-button {
+    flex: 1;
+    text-align: center;
   }
 }

@@ -139,7 +139,26 @@
                             <label for="planning-date">Fecha Estimada:</label>
                             <input type="date" id="planning-date" required>
                         </div>
-                        
+
+                        <div class="form-group checkbox-container">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="recurring-expense">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">Es un gasto fijo recurrente</span>
+                            </label>
+                        </div>
+
+                        <div id="recurring-options" class="recurring-options">
+                            <div class="form-group recurring-duration">
+                                <label for="recurring-months">Repetir durante:</label>
+                                <div class="recurring-input-group">
+                                    <input type="number" id="recurring-months" min="1" max="60" value="12">
+                                    <span class="recurring-unit">meses</span>
+                                </div>
+                            </div>
+                            <p class="recurring-info">Este gasto se repetirá automáticamente cada mes durante el período seleccionado.</p>
+                        </div>
+
                         <div class="form-group">
                             <label for="planning-notes">Notas Adicionales:</label>
                             <textarea id="planning-notes" rows="3"></textarea>

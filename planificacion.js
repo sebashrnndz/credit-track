@@ -118,6 +118,20 @@ function init() {
 
   // Check for tour continuation
   checkTourContinuation()
+
+  // Añadir manejo para gastos recurrentes
+  const recurringCheckbox = document.getElementById("recurring-expense")
+  const recurringOptions = document.getElementById("recurring-options")
+
+  if (recurringCheckbox && recurringOptions) {
+    recurringCheckbox.addEventListener("change", function () {
+      if (this.checked) {
+        recurringOptions.classList.add("show")
+      } else {
+        recurringOptions.classList.remove("show")
+      }
+    })
+  }
 }
 
 // Show success modal
@@ -457,24 +471,60 @@ function addPlannedExpense(e) {
   const dateStr = document.getElementById("planning-date").value
   const notes = document.getElementById("planning-notes").value
 
+  // Obtener información de gasto recurrente
+  const isRecurring = document.getElementById("recurring-expense")?.checked || false
+  const recurringMonths = isRecurring ? Number.parseInt(document.getElementById("recurring-months").value) || 1 : 0
+  const recurringOptions = document.getElementById("recurring-options")
+
   if (!name || isNaN(amount) || !category || !priority || !dateStr || amount <= 0) {
     alert("Por favor, complete todos los campos correctamente.")
     return
   }
 
+  // Fix date timezone issue by parsing parts manually
+  const [year, month, day] = dateStr.split("-").map(Number)
+  const plannedDate = new Date(year, month - 1, day)
+
+  // Crear el gasto base
   const plannedExpense = {
     id: Date.now().toString(),
     name,
     amount,
     category,
     priority,
-    date: dateStr,
+    date: plannedDate.toISOString().split("T")[0],
     notes,
     createdAt: new Date().toISOString(),
     completed: false,
+    isRecurring,
+    recurringMonths: isRecurring ? recurringMonths : 0,
   }
 
+  // Añadir el gasto principal
   plannedExpenses.push(plannedExpense)
+
+  // Si es recurrente, crear los gastos adicionales
+  if (isRecurring && recurringMonths > 1) {
+    for (let i = 1; i < recurringMonths; i++) {
+      const nextDate = new Date(year, month - 1 + i, day)
+      const recurringExpense = {
+        id: Date.now().toString() + "-" + i,
+        name: name + " (recurrente " + (i + 1) + "/" + recurringMonths + ")",
+        amount,
+        category,
+        priority,
+        date: nextDate.toISOString().split("T")[0],
+        notes: notes ? notes + " (Gasto recurrente)" : "Gasto recurrente",
+        createdAt: new Date().toISOString(),
+        completed: false,
+        isRecurring: true,
+        recurringMonths: 0, // Para evitar recursión
+        parentId: plannedExpense.id,
+      }
+      plannedExpenses.push(recurringExpense)
+    }
+  }
+
   savePlannedExpenses()
   renderPlannedExpenses()
   updatePlanningSummary()
@@ -485,17 +535,23 @@ function addPlannedExpense(e) {
   if (localStorage.getItem("tourInProgress") === "true") {
     showSuccessModalWithTourContinue(
       "Gasto Registrado",
-      `El gasto "${name}" ha sido registrado correctamente.`,
+      `El gasto "${name}" ha sido registrado correctamente.${isRecurring ? ` Se repetirá durante ${recurringMonths} meses.` : ""}`,
       "summary",
     )
   } else {
     // Regular success modal
-    showSuccessModal("Gasto Registrado", `El gasto "${name}" ha sido registrado correctamente.`)
+    showSuccessModal(
+      "Gasto Registrado",
+      `El gasto "${name}" ha sido registrado correctamente.${isRecurring ? ` Se repetirá durante ${recurringMonths} meses.` : ""}`,
+    )
   }
 
   // Reset form
   planningForm.reset()
   document.getElementById("planning-date").valueAsDate = new Date()
+  if (recurringOptions) {
+    recurringOptions.classList.remove("show")
+  }
 
   // Switch to summary tab after adding expense
   const summaryTabButton = document.querySelector('.tab-button[data-tab="summary"]')
@@ -516,7 +572,7 @@ function applyFilters() {
   renderPlannedExpenses()
 }
 
-// Render all planned expenses
+// Modificar la función renderPlannedExpenses para manejar tanto los gastos pendientes como los completados
 function renderPlannedExpenses() {
   planningPendingList.innerHTML = ""
   planningCompletedList.innerHTML = ""
@@ -560,6 +616,9 @@ function renderPlannedExpenses() {
   } else {
     renderExpensesList(completedExpenses, planningCompletedList)
   }
+
+  // Actualizar el resumen para mostrar los gastos pendientes del mes actual
+  updatePlanningSummary()
 }
 
 // Render a list of expenses to a specific container
@@ -708,7 +767,7 @@ function deletePlannedExpense(expenseId) {
   showSuccessModal("Gasto Eliminado", `El gasto "${expenseName}" ha sido eliminado correctamente.`)
 }
 
-// Update planning summary
+// Modificar la función updatePlanningSummary para mostrar solo los gastos pendientes del mes actual con mejor distribución
 function updatePlanningSummary() {
   if (plannedExpenses.length === 0) {
     planningSummary.innerHTML = "<p>No hay gastos planificados registrados.</p>"
@@ -815,6 +874,80 @@ function updatePlanningSummary() {
       </div>
   `
 
+  // Añadir la sección de gastos pendientes del mes actual
+  // Obtener el mes y año actual
+  const currentDate = new Date()
+  const currentMonth = currentDate.getMonth() + 1
+  const currentYear = currentDate.getFullYear()
+
+  // Filtrar los gastos pendientes del mes actual
+  const currentMonthPendingExpenses = plannedExpenses.filter((expense) => {
+    if (expense.completed) return false
+
+    const expenseDate = new Date(expense.date)
+    return expenseDate.getMonth() + 1 === currentMonth && expenseDate.getFullYear() === currentYear
+  })
+
+  // Ordenar por fecha (más cercana primero) y luego por prioridad
+  currentMonthPendingExpenses.sort((a, b) => {
+    // Primero ordenar por fecha
+    const dateA = new Date(a.date)
+    const dateB = new Date(b.date)
+    if (dateA.getTime() !== dateB.getTime()) {
+      return dateA - dateB
+    }
+
+    // Si las fechas son iguales, ordenar por prioridad (alta > media > baja)
+    const priorityOrder = { alta: 1, media: 2, baja: 3 }
+    return priorityOrder[a.priority] - priorityOrder[b.priority]
+  })
+
+  let currentMonthExpensesHTML = `
+    <div class="summary-section">
+      <h3>Gastos Pendientes del Mes Actual (${new Date().toLocaleString("default", { month: "long" })} ${currentYear})</h3>
+  `
+
+  if (currentMonthPendingExpenses.length === 0) {
+    currentMonthExpensesHTML += '<p class="no-expenses">No hay gastos pendientes para el mes actual.</p>'
+  } else {
+    currentMonthExpensesHTML += '<div class="pending-expenses-list">'
+
+    currentMonthPendingExpenses.forEach((expense) => {
+      const expenseDate = new Date(expense.date)
+      const formattedDate = expenseDate.toLocaleDateString()
+
+      currentMonthExpensesHTML += `
+        <div class="expense-card planning-card">
+          <div class="expense-header">
+            <div class="expense-title-container">
+              <span class="expense-toggle">▶</span>
+              <div class="expense-title">${expense.name} - Monto: $${formatCurrency(expense.amount)} <span class="priority-badge ${expense.priority}">${getPriorityText(expense.priority)}</span></div>
+            </div>
+            <div class="expense-actions">
+              <button class="complete-button" onclick="toggleCompleteExpense('${expense.id}', event)">
+                Marcar Completado
+              </button>
+              <button class="delete-button" onclick="confirmDeletePlannedExpense('${expense.id}', event)">Eliminar</button>
+            </div>
+          </div>
+          <div class="expense-content">
+            <div class="expense-date">Fecha Estimada: ${formattedDate}</div>
+            <div class="expense-details">
+              <div class="expense-detail"><strong>Monto:</strong> $${formatCurrency(expense.amount)}</div>
+              <div class="expense-detail"><strong>Categoría:</strong> ${getCategoryText(expense.category)}</div>
+              <div class="expense-detail"><strong>Prioridad:</strong> ${getPriorityText(expense.priority)}</div>
+              ${expense.notes ? `<div class="expense-detail"><strong>Notas:</strong> ${expense.notes}</div>` : ""}
+            </div>
+          </div>
+        </div>
+      `
+    })
+
+    currentMonthExpensesHTML += "</div>"
+  }
+
+  currentMonthExpensesHTML += "</div>"
+
   // Create category breakdown
   let categoryHTML = `
       <div class="summary-section">
@@ -871,8 +1004,26 @@ function updatePlanningSummary() {
   `
 
   // Set the summary HTML
-  planningSummary.innerHTML = summaryHTML + categoryHTML + monthlyHTML
+  planningSummary.innerHTML = summaryHTML + currentMonthExpensesHTML + categoryHTML + monthlyHTML
+
+  // Add toggle functionality to the expense cards in the summary
+  const expenseHeaders = planningSummary.querySelectorAll(".expense-header")
+  expenseHeaders.forEach((header) => {
+    header.addEventListener("click", () => {
+      const toggle = header.querySelector(".expense-toggle")
+      const content = header.nextElementSibling
+
+      toggle.classList.toggle("open")
+      content.classList.toggle("open")
+    })
+  })
 }
+
+// Modificar la función renderPlannedExpenses para manejar tanto los gastos pendientes como los completados
+
+// Modificar la función saveIncome para corregir el problema de la fecha
+
+// Modificar la función addExtraIncome para corregir el problema de la fecha
 
 // Update income summary with available balance calculations
 function updateIncomeSummary() {
