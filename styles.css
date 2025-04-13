@@ -748,7 +748,7 @@ input {
 }
 
 .complete-button {
-  background-color: #2ecc71;
+  background-color: #0e3b21;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -2933,6 +2933,7 @@ textarea {
     padding: 12px;
   }
 
+  
   .summary-amount {
     font-size: 1.1rem;
     font-weight: 500;
