@@ -1,3 +1,28 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planificación de Gastos</title>
+<link rel="stylesheet" href="styles.css">
+<!-- Añadir Chart.js desde CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <!-- Reemplazar la sección del app-header y tabs-container por este código -->
+<div class="app-header">
+  <a type="button" href="app.html" class="back-button">Inicio</a>
+  <h1>Planificación General</h1>
+  <div class="header-actions">
+      <button id="menu-toggle" class="menu-toggle-btn">
+          <span class="menu-icon">☰</span>
+      </button>
+      <div class="notification-icon" id="notification-icon">
+          <i class="notification-bell">🔔</i>
+          <span id="notification-counter" class="notification-counter">0</span>
+=======
 // DOM Elements
 const planningForm = document.getElementById("planning-form")
 const incomeForm = document.getElementById("income-form")
@@ -118,20 +143,6 @@ function init() {
 
   // Check for tour continuation
   checkTourContinuation()
-
-  // Añadir manejo para gastos recurrentes
-  const recurringCheckbox = document.getElementById("recurring-expense")
-  const recurringOptions = document.getElementById("recurring-options")
-
-  if (recurringCheckbox && recurringOptions) {
-    recurringCheckbox.addEventListener("change", function () {
-      if (this.checked) {
-        recurringOptions.classList.add("show")
-      } else {
-        recurringOptions.classList.remove("show")
-      }
-    })
-  }
 }
 
 // Show success modal
@@ -471,60 +482,24 @@ function addPlannedExpense(e) {
   const dateStr = document.getElementById("planning-date").value
   const notes = document.getElementById("planning-notes").value
 
-  // Obtener información de gasto recurrente
-  const isRecurring = document.getElementById("recurring-expense")?.checked || false
-  const recurringMonths = isRecurring ? Number.parseInt(document.getElementById("recurring-months").value) || 1 : 0
-  const recurringOptions = document.getElementById("recurring-options")
-
   if (!name || isNaN(amount) || !category || !priority || !dateStr || amount <= 0) {
     alert("Por favor, complete todos los campos correctamente.")
     return
   }
 
-  // Fix date timezone issue by parsing parts manually
-  const [year, month, day] = dateStr.split("-").map(Number)
-  const plannedDate = new Date(year, month - 1, day)
-
-  // Crear el gasto base
   const plannedExpense = {
     id: Date.now().toString(),
     name,
     amount,
     category,
     priority,
-    date: plannedDate.toISOString().split("T")[0],
+    date: dateStr,
     notes,
     createdAt: new Date().toISOString(),
     completed: false,
-    isRecurring,
-    recurringMonths: isRecurring ? recurringMonths : 0,
   }
 
-  // Añadir el gasto principal
   plannedExpenses.push(plannedExpense)
-
-  // Si es recurrente, crear los gastos adicionales
-  if (isRecurring && recurringMonths > 1) {
-    for (let i = 1; i < recurringMonths; i++) {
-      const nextDate = new Date(year, month - 1 + i, day)
-      const recurringExpense = {
-        id: Date.now().toString() + "-" + i,
-        name: name + " (recurrente " + (i + 1) + "/" + recurringMonths + ")",
-        amount,
-        category,
-        priority,
-        date: nextDate.toISOString().split("T")[0],
-        notes: notes ? notes + " (Gasto recurrente)" : "Gasto recurrente",
-        createdAt: new Date().toISOString(),
-        completed: false,
-        isRecurring: true,
-        recurringMonths: 0, // Para evitar recursión
-        parentId: plannedExpense.id,
-      }
-      plannedExpenses.push(recurringExpense)
-    }
-  }
-
   savePlannedExpenses()
   renderPlannedExpenses()
   updatePlanningSummary()
@@ -535,23 +510,17 @@ function addPlannedExpense(e) {
   if (localStorage.getItem("tourInProgress") === "true") {
     showSuccessModalWithTourContinue(
       "Gasto Registrado",
-      `El gasto "${name}" ha sido registrado correctamente.${isRecurring ? ` Se repetirá durante ${recurringMonths} meses.` : ""}`,
+      `El gasto "${name}" ha sido registrado correctamente.`,
       "summary",
     )
   } else {
     // Regular success modal
-    showSuccessModal(
-      "Gasto Registrado",
-      `El gasto "${name}" ha sido registrado correctamente.${isRecurring ? ` Se repetirá durante ${recurringMonths} meses.` : ""}`,
-    )
+    showSuccessModal("Gasto Registrado", `El gasto "${name}" ha sido registrado correctamente.`)
   }
 
   // Reset form
   planningForm.reset()
   document.getElementById("planning-date").valueAsDate = new Date()
-  if (recurringOptions) {
-    recurringOptions.classList.remove("show")
-  }
 
   // Switch to summary tab after adding expense
   const summaryTabButton = document.querySelector('.tab-button[data-tab="summary"]')
@@ -572,7 +541,7 @@ function applyFilters() {
   renderPlannedExpenses()
 }
 
-// Modificar la función renderPlannedExpenses para manejar tanto los gastos pendientes como los completados
+// Render all planned expenses
 function renderPlannedExpenses() {
   planningPendingList.innerHTML = ""
   planningCompletedList.innerHTML = ""
@@ -616,9 +585,6 @@ function renderPlannedExpenses() {
   } else {
     renderExpensesList(completedExpenses, planningCompletedList)
   }
-
-  // Actualizar el resumen para mostrar los gastos pendientes del mes actual
-  updatePlanningSummary()
 }
 
 // Render a list of expenses to a specific container
@@ -767,7 +733,7 @@ function deletePlannedExpense(expenseId) {
   showSuccessModal("Gasto Eliminado", `El gasto "${expenseName}" ha sido eliminado correctamente.`)
 }
 
-// Modificar la función updatePlanningSummary para mostrar solo los gastos pendientes del mes actual con mejor distribución
+// Update planning summary
 function updatePlanningSummary() {
   if (plannedExpenses.length === 0) {
     planningSummary.innerHTML = "<p>No hay gastos planificados registrados.</p>"
@@ -871,83 +837,21 @@ function updatePlanningSummary() {
               <div class="summary-amount">$${formatCurrency(highPriorityAmount)}</div>
               <div class="summary-subtitle">${highPriorityCount} gastos prioritarios</div>
           </div>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
       </div>
-  `
+  </div>
+</div>
 
-  // Añadir la sección de gastos pendientes del mes actual
-  // Obtener el mes y año actual
-  const currentDate = new Date()
-  const currentMonth = currentDate.getMonth() + 1
-  const currentYear = currentDate.getFullYear()
-
-  // Filtrar los gastos pendientes del mes actual
-  const currentMonthPendingExpenses = plannedExpenses.filter((expense) => {
-    if (expense.completed) return false
-
-    const expenseDate = new Date(expense.date)
-    return expenseDate.getMonth() + 1 === currentMonth && expenseDate.getFullYear() === currentYear
-  })
-
-  // Ordenar por fecha (más cercana primero) y luego por prioridad
-  currentMonthPendingExpenses.sort((a, b) => {
-    // Primero ordenar por fecha
-    const dateA = new Date(a.date)
-    const dateB = new Date(b.date)
-    if (dateA.getTime() !== dateB.getTime()) {
-      return dateA - dateB
-    }
-
-    // Si las fechas son iguales, ordenar por prioridad (alta > media > baja)
-    const priorityOrder = { alta: 1, media: 2, baja: 3 }
-    return priorityOrder[a.priority] - priorityOrder[b.priority]
-  })
-
-  let currentMonthExpensesHTML = `
-    <div class="summary-section">
-      <h3>Gastos Pendientes del Mes Actual (${new Date().toLocaleString("default", { month: "long" })} ${currentYear})</h3>
-  `
-
-  if (currentMonthPendingExpenses.length === 0) {
-    currentMonthExpensesHTML += '<p class="no-expenses">No hay gastos pendientes para el mes actual.</p>'
-  } else {
-    currentMonthExpensesHTML += '<div class="pending-expenses-list">'
-
-    currentMonthPendingExpenses.forEach((expense) => {
-      const expenseDate = new Date(expense.date)
-      const formattedDate = expenseDate.toLocaleDateString()
-
-      currentMonthExpensesHTML += `
-        <div class="expense-card planning-card">
-          <div class="expense-header">
-            <div class="expense-title-container">
-              <span class="expense-toggle">▶</span>
-              <div class="expense-title">${expense.name} - Monto: $${formatCurrency(expense.amount)} <span class="priority-badge ${expense.priority}">${getPriorityText(expense.priority)}</span></div>
-            </div>
-            <div class="expense-actions">
-              <button class="complete-button" onclick="toggleCompleteExpense('${expense.id}', event)">
-                Marcar Completado
-              </button>
-              <button class="delete-button" onclick="confirmDeletePlannedExpense('${expense.id}', event)">Eliminar</button>
-            </div>
-          </div>
-          <div class="expense-content">
-            <div class="expense-date">Fecha Estimada: ${formattedDate}</div>
-            <div class="expense-details">
-              <div class="expense-detail"><strong>Monto:</strong> $${formatCurrency(expense.amount)}</div>
-              <div class="expense-detail"><strong>Categoría:</strong> ${getCategoryText(expense.category)}</div>
-              <div class="expense-detail"><strong>Prioridad:</strong> ${getPriorityText(expense.priority)}</div>
-              ${expense.notes ? `<div class="expense-detail"><strong>Notas:</strong> ${expense.notes}</div>` : ""}
-            </div>
-          </div>
-        </div>
-      `
-    })
-
-    currentMonthExpensesHTML += "</div>"
-  }
-
-  currentMonthExpensesHTML += "</div>"
-
+<<<<<<< HEAD
+<!-- Reemplazar la sección del menú compacto por este código actualizado -->
+<div id="compact-menu" class="compact-menu">
+  <div class="compact-menu-content">
+    <div class="menu-group">
+      <div class="menu-group-header" data-group="summary">
+        <span class="menu-icon">📊</span>
+        <span>Resumen</span>
+        <span class="nav-arrow">▶</span>
+=======
   // Create category breakdown
   let categoryHTML = `
       <div class="summary-section">
@@ -973,57 +877,82 @@ function updatePlanningSummary() {
 
   categoryHTML += `
           </div>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
       </div>
-  `
-
-  // Create monthly breakdown
-  let monthlyHTML = `
-      <div class="summary-section">
-          <h3>Gastos por Mes</h3>
-          <div class="monthly-breakdown">
-  `
-
-  sortedMonths.forEach((monthYear) => {
-    const { month, year, amount, pendingAmount, completedAmount, count } = monthlyTotals[monthYear]
-    monthlyHTML += `
-          <div class="monthly-item">
-              <div class="monthly-date">${month} ${year}</div>
-              <div class="monthly-amount">$${formatCurrency(amount)}</div>
-              <div class="monthly-breakdown-details">
-                  <div>Pendiente: $${formatCurrency(pendingAmount)}</div>
-                  <div>Completado: $${formatCurrency(completedAmount)}</div>
-              </div>
-              <div class="monthly-count">${count} gastos</div>
-          </div>
-      `
-  })
-
-  monthlyHTML += `
-          </div>
+      <div class="menu-group-items" id="summary-group">
+        <button class="menu-item active" data-tab="summary">Resumen General</button>
+        <button class="menu-item" data-tab="statistics">Estadísticas</button>
       </div>
-  `
+    </div>
+    
+    <div class="menu-group">
+      <div class="menu-group-header" data-group="finances">
+        <span class="menu-icon">💰</span>
+        <span>Finanzas</span>
+        <span class="nav-arrow">▶</span>
+      </div>
+      <div class="menu-group-items" id="finances-group">
+        <button class="menu-item" data-tab="income">Ingresos</button>
+        <button class="menu-item" data-tab="balance">Saldo Disponible</button>
+      </div>
+    </div>
+    
+    <div class="menu-group">
+      <div class="menu-group-header" data-group="expenses">
+        <span class="menu-icon">📝</span>
+        <span>Gastos</span>
+        <span class="nav-arrow">▶</span>
+      </div>
+      <div class="menu-group-items" id="expenses-group">
+        <button class="menu-item" data-tab="register">Registrar Gasto</button>
+        <button class="menu-item" data-tab="pending">Gastos Pendientes</button>
+        <button class="menu-item" data-tab="completed">Gastos Completados</button>
+      </div>
+    </div>
+    
+    <!-- Grupo para Tarjeta de Crédito -->
+    <div class="menu-group">
+      <div class="menu-group-header" data-group="credit">
+        <span class="menu-icon">💳</span>
+        <span>Tarjeta de Crédito</span>
+        <span class="nav-arrow">▶</span>
+      </div>
+      <div class="menu-group-items" id="credit-group">
+        <button class="menu-item" data-tab="credit-summary">Resumen</button>
+        <button class="menu-item" data-tab="credit-register">Registrar Gasto</button>
+        <button class="menu-item" data-tab="credit-pending">Cuotas Pendientes</button>
+        <button class="menu-item" data-tab="credit-completed">Pagos Completados</button>
+      </div>
+    </div>
+    
+    <div class="menu-group">
+      <div class="menu-group-header" data-group="tools">
+        <span class="menu-icon">🔧</span>
+        <span>Herramientas</span>
+        <span class="nav-arrow">▶</span>
+      </div>
+      <div class="menu-group-items" id="tools-group">
+        <button class="menu-item" data-tab="goals">Metas de Ahorro</button>
+        <button class="menu-item" data-tab="calendar">Calendario</button>
+        <button class="menu-item" data-tab="settings">Configuración</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<<<<<<< HEAD
+<!-- Contenedor de pestañas (mantener esto) -->
+<div class="tabs-container">
+        
+        <!-- El contenido de las pestañas permanece igual -->
+        <div class="tab-content active" id="summary-tab">
+            <div class="planning-summary-container card">
+                <h2>Resumen de Gastos Planificados</h2>
+                <div id="planning-summary"></div>
+=======
   // Set the summary HTML
-  planningSummary.innerHTML = summaryHTML + currentMonthExpensesHTML + categoryHTML + monthlyHTML
-
-  // Add toggle functionality to the expense cards in the summary
-  const expenseHeaders = planningSummary.querySelectorAll(".expense-header")
-  expenseHeaders.forEach((header) => {
-    header.addEventListener("click", () => {
-      const toggle = header.querySelector(".expense-toggle")
-      const content = header.nextElementSibling
-
-      toggle.classList.toggle("open")
-      content.classList.toggle("open")
-    })
-  })
+  planningSummary.innerHTML = summaryHTML + categoryHTML + monthlyHTML
 }
-
-// Modificar la función renderPlannedExpenses para manejar tanto los gastos pendientes como los completados
-
-// Modificar la función saveIncome para corregir el problema de la fecha
-
-// Modificar la función addExtraIncome para corregir el problema de la fecha
 
 // Update income summary with available balance calculations
 function updateIncomeSummary() {
@@ -1211,452 +1140,484 @@ function renderMonthBalanceItem(monthData, isCurrentMonth = false) {
                         : `<span class="no-income-warning">Sin ingresos registrados</span>`
                     }
                 </div>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
             </div>
             
-            <div class="monthly-balance-content">
-                ${
-                  totalIncome > 0
-                    ? `
-                    <div class="balance-summary">
-                        <div class="balance-summary-item">
-                            <span>Saldo Disponible:</span>
-                            <span class="balance-amount ${balanceClass}">$${formatCurrency(availableBalance)}</span>
-                        </div>
-                        <div class="balance-percentage">
-                            <div class="balance-bar-container">
-                                <div class="balance-bar ${balanceClass}" style="width: ${Math.max(0, Math.min(100, balancePercentage))}%"></div>
-                            </div>
-                            <div class="balance-percentage-text">
-                                ${balancePercentage.toFixed(1)}% disponible
-                            </div>
-                        </div>
-                    </div>
-                `
-                    : `
-                    <div class="no-income-message">
-                        <p>No has registrado ingresos para este mes. Registra tu sueldo para ver el saldo disponible.</p>
-                        <button class="btn-primary planning-btn" onclick="switchToIncomeTab()">Registrar Ingresos</button>
-                    </div>
-                `
-                }
-                
-                <div class="expense-breakdown">
-                    <h4>Desglose de Gastos</h4>
-                    <div class="expense-breakdown-grid">
-                        <div class="expense-breakdown-item">
-                            <div class="expense-breakdown-title">Tarjeta de Crédito</div>
-                            <div class="expense-breakdown-amount">$${formatCurrency(monthData.creditCardAmount)}</div>
-                            ${
-                              monthData.creditCardDetails.length > 0
-                                ? `
-                                <div class="expense-breakdown-details">
-                                    ${monthData.creditCardDetails
-                                      .map(
-                                        (detail) => `
-                                        <div class="expense-detail-item">
-                                            <span>${detail.name} (Cuota ${detail.installment})</span>
-                                            <span>$${formatCurrency(detail.amount)}</span>
-                                        </div>
-                                    `,
-                                      )
-                                      .join("")}
-                                </div>
-                            `
-                                : ""
-                            }
-                        </div>
-                        <div class="expense-breakdown-item">
-                            <div class="expense-breakdown-title">Gastos Planificados</div>
-                            <div class="expense-breakdown-amount">$${formatCurrency(monthData.plannedAmount)}</div>
-                            ${
-                              monthData.plannedDetails.length > 0
-                                ? `
-                                <div class="expense-breakdown-details">
-                                    ${monthData.plannedDetails
-                                      .map(
-                                        (detail) => `
-                                        <div class="expense-detail-item">
-                                            <span>${detail.name} <span class="priority-badge ${detail.priority}">${getPriorityText(detail.priority)}</span></span>
-                                            <span>$${formatCurrency(detail.amount)}</span>
-                                        </div>
-                                    `,
-                                      )
-                                      .join("")}
-                                </div>
-                            `
-                                : ""
-                            }
-                        </div>
-                    </div>
-                    <div class="expense-breakdown-total">
-                        <span>Total Gastos:</span>
-                        <span>$${formatCurrency(monthData.totalAmount)}</span>
-                    </div>
-                </div>
-                
-                ${
-                  totalIncome > 0
-                    ? `
-                    <div class="income-breakdown">
-                        <h4>Desglose de Ingresos</h4>
-                        <div class="income-breakdown-details">
-                            <div class="income-detail-item">
-                                <span>Sueldo Base:</span>
-                                <span>$${formatCurrency(monthlyIncomeAmount)}</span>
-                            </div>
-                            ${
-                              extraIncomeAmount > 0
-                                ? `
-                                <div class="income-detail-item">
-                                    <span>Ingresos Extra (${monthlyExtras.length}):</span>
-                                    <span>$${formatCurrency(extraIncomeAmount)}</span>
-                                </div>
-                                <div class="extra-income-details">
-                                    ${monthlyExtras
-                                      .map(
-                                        (extra) => `
-                                        <div class="extra-income-item">
-                                            <span>${extra.description}</span>
-                                            <span>$${formatCurrency(extra.amount)}</span>
-                                        </div>
-                                    `,
-                                      )
-                                      .join("")}
-                                </div>
-                            `
-                                : ""
-                            }
-                            <div class="income-detail-item total">
-                                <span>Total Ingresos:</span>
-                                <span>$${formatCurrency(totalIncome)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `
-                    : ""
-                }
+            <div class="total-expenses-container card">
+                <h2>Resumen Financiero Total</h2>
+                <div id="total-expenses-summary"></div>
             </div>
         </div>
-    `
-}
+        
+        <div class="tab-content" id="income-tab">
+            <div class="card">
+                <h2>Gestión de Ingresos Mensuales</h2>
+                <form id="income-form">
+                    <div class="form-group">
+                        <label for="income-month">Mes:</label>
+                        <input type="month" id="income-month" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="monthly-income">Sueldo Base:</label>
+                        <input type="number" id="monthly-income" min="1" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="income-notes">Notas sobre ingresos (opcional):</label>
+                        <textarea id="income-notes" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary planning-btn">Guardar Sueldo</button>
+                </form>
+                
+                <div class="extra-income-section">
+                    <h3>Ingresos Extras</h3>
+                    <form id="extra-income-form">
+                        <div class="form-group">
+                            <label for="extra-income-month">Mes:</label>
+                            <input type="month" id="extra-income-month" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="extra-income-description">Descripción:</label>
+                            <input type="text" id="extra-income-description" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="extra-income-amount">Monto:</label>
+                            <input type="number" id="extra-income-amount" min="1" step="0.01" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary planning-btn">Agregar Ingreso Extra</button>
+                    </form>
+                </div>
+                
+                <div class="income-history">
+                    <h3>Historial de Ingresos</h3>
+                    <div id="income-history-list"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="balance-tab">
+            <div class="card">
+                <h2>Saldo Disponible Mensual</h2>
+                <div id="income-summary"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="register-tab">
+            <div class="card">
+                <h2>Nuevo Gasto Planificado</h2>
+                <form id="planning-form">
+                    <div class="form-group">
+                        <label for="planning-name">Descripción del Gasto:</label>
+                        <input type="text" id="planning-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="planning-amount">Monto Estimado:</label>
+                        <input type="number" id="planning-amount" min="1" step="0.01" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="planning-category">Categoría:</label>
+                        <select id="planning-category" required>
+                            <option value="">Seleccionar categoría</option>
+                            <option value="hogar">Hogar</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="alimentacion">Alimentación</option>
+                            <option value="salud">Salud</option>
+                            <option value="educacion">Educación</option>
+                            <option value="entretenimiento">Entretenimiento</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="planning-priority">Prioridad:</label>
+                        <select id="planning-priority" required>
+                            <option value="">Seleccionar prioridad</option>
+                            <option value="alta">Alta</option>
+                            <option value="media">Media</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="planning-date">Fecha Estimada:</label>
+                        <input type="date" id="planning-date" required>
+                    </div>
 
-// Update total expenses summary (combining credit card and planned expenses)
-function updateTotalExpensesSummary() {
-  // Get credit card expenses from localStorage
-  const creditCardExpenses = JSON.parse(localStorage.getItem("expenses")) || []
+                    <div class="form-group checkbox-container">
+                        <label class="custom-checkbox">
+                            <input type="checkbox" id="recurring-expense">
+                            <span class="checkmark"></span>
+                            <span class="checkbox-label">Es un gasto fijo recurrente</span>
+                        </label>
+                    </div>
 
-  // Calculate credit card totals
-  let creditCardPending = 0
-  let creditCardPaid = 0
+                    <div id="recurring-options" class="recurring-options">
+                        <div class="form-group recurring-duration">
+                            <label for="recurring-months">Repetir durante:</label>
+                            <div class="recurring-input-group">
+                                <input type="number" id="recurring-months" min="1" max="60" value="12">
+                                <span class="recurring-unit">meses</span>
+                            </div>
+                        </div>
+                        <p class="recurring-info">Este gasto se repetirá automáticamente cada mes durante el período seleccionado.</p>
+                    </div>
 
-  creditCardExpenses.forEach((expense) => {
-    expense.installments.forEach((installment) => {
-      const amount = Number.parseFloat(installment.amount)
-      if (installment.paid) {
-        creditCardPaid += amount
-      } else {
-        creditCardPending += amount
-      }
-    })
-  })
+                    <div class="form-group">
+                        <label for="planning-notes">Notas Adicionales:</label>
+                        <textarea id="planning-notes" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary planning-btn">Registrar Gasto</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="pending-tab">
+            <div class="expenses-container">
+                <h2>Gastos Pendientes</h2>
+                <div class="planning-filters">
+                    <div class="filter-group">
+                        <label for="filter-category">Filtrar por Categoría:</label>
+                        <select id="filter-category">
+                            <option value="todos">Todos</option>
+                            <option value="hogar">Hogar</option>
+                            <option value="transporte">Transporte</option>
+                            <option value="alimentacion">Alimentación</option>
+                            <option value="salud">Salud</option>
+                            <option value="educacion">Educación</option>
+                            <option value="entretenimiento">Entretenimiento</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-priority">Filtrar por Prioridad:</label>
+                        <select id="filter-priority">
+                            <option value="todos">Todos</option>
+                            <option value="alta">Alta</option>
+                            <option value="media">Media</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                    </div>
+                    <button id="apply-filters" class="btn-secondary">Aplicar Filtros</button>
+                </div>
+                <div id="planning-pending-list"></div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="completed-tab">
+            <div class="expenses-container">
+                <h2>Gastos Completados</h2>
+                <div id="planning-completed-list"></div>
+            </div>
+        </div>
+    </div>
 
-  // Calculate planned expenses totals
-  let plannedPending = 0
-  let plannedCompleted = 0
+<!-- Nuevas pestañas para Tarjeta de Crédito -->
+<div class="tab-content" id="credit-summary-tab">
+    <div class="nearest-payment-container card">
+        <h2>Próximo Pago</h2>
+        <div id="nearest-payment-summary"></div>
+    </div>
+    
+    <div class="summary-container card">
+        <h2>Resumen de Deuda</h2>
+        <div id="debt-summary"></div>
+    </div>
+</div>
 
-  plannedExpenses.forEach((expense) => {
-    if (expense.completed) {
-      plannedCompleted += expense.amount
-    } else {
-      plannedPending += expense.amount
-    }
-  })
+<div class="tab-content" id="credit-register-tab">
+    <div class="card">
+        <h2>Nuevo Gasto de Tarjeta</h2>
+        <form id="expense-form">
+            <div class="form-group">
+                <label for="expense-name">Nombre del Gasto:</label>
+                <input type="text" id="expense-name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="expense-amount">Monto Total:</label>
+                <input type="number" id="expense-amount" min="1" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="expense-installments">Cantidad de Cuotas:</label>
+                <input type="number" id="expense-installments" min="1" max="60" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment-start-date">Fecha de Inicio de Pago:</label>
+                <input type="date" id="payment-start-date" required>
+            </div>
+            
+            <button type="submit" class="btn-primary">Registrar Gasto</button>
+        </form>
+    </div>
+</div>
 
-  // Calculate totals
-  const totalPending = creditCardPending + plannedPending
-  const totalPaid = creditCardPaid + plannedCompleted
+<div class="tab-content" id="credit-pending-tab">
+    <div class="expenses-container">
+        <h2>Cuotas Pendientes</h2>
+        <div id="expenses-list"></div>
+    </div>
+</div>
 
-  // Create HTML
-  const html = `
-      <div class="total-summary">
-          <div class="total-summary-header">
-              <h3>Resumen Financiero Global</h3>
-              <p>Combinación de gastos de tarjeta de crédito y gastos planificados</p>
-          </div>
-          
-          <div class="financial-section">
-              <h4 class="financial-section-title">Gastos Pendientes</h4>
-              <div class="summary-grid">
-                  <div class="summary-card total-card">
-                      <div class="summary-title">Tarjeta de Crédito</div>
-                      <div class="summary-amount">$${formatCurrency(creditCardPending)}</div>
-                  </div>
-                  <div class="summary-card total-card">
-                      <div class="summary-title">Gastos Planificados</div>
-                      <div class="summary-amount">$${formatCurrency(plannedPending)}</div>
-                  </div>
-                  <div class="summary-card total-card pending-total">
-                      <div class="summary-title">Total Pendiente</div>
-                      <div class="summary-amount">$${formatCurrency(totalPending)}</div>
-                  </div>
-              </div>
-          </div>
-          
-          <div class="financial-section">
-              <h4 class="financial-section-title">Gastos Pagados/Completados</h4>
-              <div class="summary-grid">
-                  <div class="summary-card total-card">
-                      <div class="summary-title">Tarjeta de Crédito</div>
-                      <div class="summary-amount positive">$${formatCurrency(creditCardPaid)}</div>
-                  </div>
-                  <div class="summary-card total-card">
-                      <div class="summary-title">Gastos Planificados</div>
-                      <div class="summary-amount positive">$${formatCurrency(plannedCompleted)}</div>
-                  </div>
-                  <div class="summary-card total-card completed-total">
-                      <div class="summary-title">Total Pagado</div>
-                      <div class="summary-amount positive">$${formatCurrency(totalPaid)}</div>
-                  </div>
-              </div>
-          </div>
-          
-          <div class="financial-advice">
-              <h4>Recomendaciones Financieras</h4>
-              <ul>
-                  <li>Prioriza los gastos de alta prioridad y las cuotas de tarjeta de crédito.</li>
-                  <li>Considera posponer gastos planificados de baja prioridad si tu presupuesto es ajustado.</li>
-                  <li>Revisa regularmente tus gastos para mantener un control efectivo de tus finanzas.</li>
-                  <li>Considera establecer un fondo de emergencia antes de realizar gastos no esenciales.</li>
-              </ul>
-          </div>
+<div class="tab-content" id="credit-completed-tab">
+    <div class="expenses-container">
+        <h2>Pagos Completados</h2>
+        <div id="completed-expenses-list"></div>
+    </div>
+</div>
+
+<div class="tab-content" id="statistics-tab">
+  <div class="card">
+    <h2>Estadísticas y Gráficos</h2>
+    <div class="charts-container">
+      <div class="chart-card">
+        <h3>Distribución de Gastos por Categoría</h3>
+        <div class="chart-wrapper">
+          <canvas id="category-chart"></canvas>
+        </div>
       </div>
-  `
-
-  totalExpensesSummary.innerHTML = html
-}
-
-// Switch to income tab
-function switchToIncomeTab() {
-  const incomeTabButton = document.querySelector('.tab-button[data-tab="income"]')
-  if (incomeTabButton) {
-    incomeTabButton.click()
-  }
-}
-
-// Añadir una nueva función para mostrar el modal de éxito con botón para continuar el tour
-function showSuccessModalWithTourContinue(title, message, nextStep) {
-  successTitle.textContent = title
-  successMessage.textContent = message
-
-  // Añadir botón para continuar el tour
-  const continueButton = document.createElement("button")
-  continueButton.id = "continue-tour-button"
-  continueButton.className = "btn-primary"
-  continueButton.textContent = "Continuar con el Tour"
-  continueButton.style.marginRight = "10px"
-
-  // Limpiar botones anteriores
-  const modalFooter = document.querySelector(".success-modal-footer")
-  if (modalFooter) {
-    modalFooter.innerHTML = ""
-    modalFooter.appendChild(continueButton)
-    modalFooter.appendChild(successOk.cloneNode(true))
-
-    // Actualizar el event listener para el botón OK
-    modalFooter.querySelector("#success-ok").addEventListener("click", () => {
-      successModal.style.display = "none"
-    })
-
-    // Añadir event listener para el botón continuar
-    continueButton.addEventListener("click", () => {
-      successModal.style.display = "none"
-      continueTour(nextStep)
-    })
-  } else {
-    // Si no existe el footer, crear uno nuevo
-    const newFooter = document.createElement("div")
-    newFooter.className = "success-modal-footer"
-    newFooter.appendChild(continueButton)
-    newFooter.appendChild(successOk.cloneNode(true))
-
-    // Actualizar el contenido del modal
-    const modalContent = successModal.querySelector(".modal-content")
-    modalContent.appendChild(newFooter)
-
-    // Añadir event listeners
-    newFooter.querySelector("#success-ok").addEventListener("click", () => {
-      successModal.style.display = "none"
-    })
-
-    continueButton.addEventListener("click", () => {
-      successModal.style.display = "none"
-      continueTour(nextStep)
-    })
-  }
-
-  successModal.style.display = "block"
-}
-
-// Añadir función para continuar con el tour
-function continueTour(nextStep) {
-  // Redirigir a la página de app.html con el paso siguiente
-  window.location.href = `app.html?continue=${nextStep}`
-}
-
-// Modificar la función checkTourContinuation para manejar los diferentes pasos del tour
-function checkTourContinuation() {
-  const urlParams = new URLSearchParams(window.location.search)
-  const tourParam = urlParams.get("tour")
-
-  if (tourParam) {
-    // Marcar que el tour está en progreso
-    localStorage.setItem("tourInProgress", "true")
-
-    // Remove the parameter from the URL without refreshing
-    const newUrl = window.location.pathname
-    window.history.replaceState({}, document.title, newUrl)
-
-    // Continue the tour based on the parameter
-    if (tourParam === "income") {
-      // Switch to income tab
-      const incomeTabButton = document.querySelector('.tab-button[data-tab="income"]')
-      if (incomeTabButton) {
-        incomeTabButton.click()
-
-        // Show a guide tooltip for the income form
-        setTimeout(() => {
-          showTourTooltip(
-            document.getElementById("income-form"),
-            "Registra tu Sueldo Mensual",
-            'Ingresa el mes actual, tu sueldo mensual y haz clic en "Guardar Sueldo". Después de guardar, podrás continuar con el tour.',
-            "top",
-          )
-        }, 500)
-      }
-    } else if (tourParam === "extra-income") {
-      // Switch to income tab and scroll to extra income form
-      const incomeTabButton = document.querySelector('.tab-button[data-tab="income"]')
-      if (incomeTabButton) {
-        incomeTabButton.click()
-
-        // Scroll to extra income form
-        setTimeout(() => {
-          document.getElementById("extra-income-form").scrollIntoView({ behavior: "smooth" })
-
-          // Show a guide tooltip for the extra income form
-          showTourTooltip(
-            document.getElementById("extra-income-form"),
-            "Agrega un Ingreso Extra",
-            "Registra un ingreso adicional como un bono o trabajo freelance. Después de agregar, podrás continuar con el tour.",
-            "top",
-          )
-        }, 500)
-      }
-    } else if (tourParam === "planning") {
-      // Switch to planning tab
-      const planningTabButton = document.querySelector('.tab-button[data-tab="register"]')
-      if (planningTabButton) {
-        planningTabButton.click()
-
-        // Show a guide tooltip for the planning form
-        setTimeout(() => {
-          showTourTooltip(
-            document.getElementById("planning-form"),
-            "Registra un Gasto Planificado",
-            'Completa el formulario con los detalles del gasto y haz clic en "Registrar Gasto". Después de registrar, podrás continuar con el tour.',
-            "top",
-          )
-        }, 500)
-      }
-    } else if (tourParam === "summary") {
-      // Switch to summary tab
-      const summaryTabButton = document.querySelector('.tab-button[data-tab="summary"]')
-      if (summaryTabButton) {
-        summaryTabButton.click()
-
-        // Show a guide tooltip for the summary section
-        setTimeout(() => {
-          showTourTooltip(
-            document.getElementById("planning-summary"),
-            "Visualiza tu Situación Financiera",
-            'Aquí puedes ver un resumen de tus gastos planificados por categoría y mes. Haz clic en "Entendido" para continuar con el tour.',
-            "top",
-            () => {
-              // Redirigir a app.html para finalizar el tour
-              window.location.href = "app.html?continue=finish"
-            },
-          )
-        }, 500)
-      }
-    }
-  }
-}
-
-// Modificar la función showTourTooltip para permitir una acción al hacer clic en "Entendido"
-function showTourTooltip(element, title, content, position = "bottom", onComplete = null) {
-  if (!element) return
-
-  // Create tooltip element if it doesn't exist
-  let tooltip = document.getElementById("tour-tooltip")
-  if (!tooltip) {
-    tooltip = document.createElement("div")
-    tooltip.id = "tour-tooltip"
-    tooltip.className = "tour-tooltip"
-    document.body.appendChild(tooltip)
-  }
-
-  // Set tooltip content
-  tooltip.innerHTML = `
-    <div class="tooltip-header">
-      <h4>${title}</h4>
-      <span class="tooltip-close">&times;</span>
+      <div class="chart-card">
+        <h3>Evolución de Gastos Mensuales</h3>
+        <div class="chart-wrapper">
+          <canvas id="monthly-chart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Comparativa Ingresos vs Gastos</h3>
+        <div class="chart-wrapper">
+          <canvas id="income-expense-chart"></canvas>
+        </div>
+      </div>
     </div>
-    <div class="tooltip-content">
-      ${content}
+  </div>
+</div>
+
+<div class="tab-content" id="goals-tab">
+  <div class="card">
+    <h2>Metas de Ahorro</h2>
+    <form id="savings-goal-form">
+      <div class="form-group">
+        <label for="goal-name">Nombre de la Meta:</label>
+        <input type="text" id="goal-name" required placeholder="Ej: Vacaciones, Nuevo auto, etc.">
+      </div>
+      
+      <div class="form-group">
+        <label for="goal-amount">Monto Objetivo:</label>
+        <input type="number" id="goal-amount" min="1" step="0.01" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="goal-date">Fecha Objetivo:</label>
+        <input type="date" id="goal-date" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="goal-initial">Monto Inicial (opcional):</label>
+        <input type="number" id="goal-initial" min="0" step="0.01" value="0">
+      </div>
+      
+      <div class="form-group">
+        <label for="goal-notes">Notas:</label>
+        <textarea id="goal-notes" rows="3"></textarea>
+      </div>
+      
+      <button type="submit" class="btn-primary">Crear Meta de Ahorro</button>
+    </form>
+    
+    <div class="goals-container">
+      <h3>Mis Metas de Ahorro</h3>
+      <div id="savings-goals-list"></div>
     </div>
-    <div class="tooltip-footer">
-      <button class="tooltip-button">Entendido</button>
+  </div>
+</div>
+</div>
+
+<!-- Añadir después de la sección de tabs-container -->
+<div class="tab-content" id="calendar-tab">
+  <div class="card">
+    <h2>Calendario Financiero</h2>
+    <div class="calendar-controls">
+      <button id="prev-month" class="btn-secondary"><i class="arrow left"></i> Mes Anterior</button>
+      <h3 id="current-month-display">Mes Actual</h3>
+      <button id="next-month" class="btn-secondary">Mes Siguiente <i class="arrow right"></i></button>
     </div>
-  `
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <div>Dom</div>
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mié</div>
+        <div>Jue</div>
+        <div>Vie</div>
+        <div>Sáb</div>
+      </div>
+      <div id="calendar-grid" class="calendar-grid"></div>
+    </div>
+    <div id="day-details" class="day-details">
+      <h3>Selecciona un día para ver detalles</h3>
+    </div>
+  </div>
+</div>
 
-  // Position the tooltip
-  const rect = element.getBoundingClientRect()
-  const tooltipHeight = 200 // Approximate height
+<div class="tab-content" id="settings-tab">
+  <div class="card">
+    <h2>Configuración</h2>
+    
+    <div class="settings-section">
+      <h3>Notificaciones</h3>
+      <div class="form-group">
+        <label class="toggle-switch">
+          <input type="checkbox" id="notifications-enabled" checked>
+          <span class="toggle-slider"></span>
+          <span class="toggle-label">Habilitar notificaciones</span>
+        </label>
+      </div>
+      
+      <div id="notification-settings" class="notification-settings">
+        <div class="form-group">
+          <label class="toggle-switch">
+            <input type="checkbox" id="payment-reminders" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Recordatorios de pagos</span>
+          </label>
+          <div class="setting-detail">
+            <label for="days-before-payment">Días de anticipación:</label>
+            <input type="number" id="days-before-payment" min="1" max="30" value="3" class="small-input">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="toggle-switch">
+            <input type="checkbox" id="low-balance-alerts" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Alertas de saldo bajo</span>
+          </label>
+          <div class="setting-detail">
+            <label for="low-balance-threshold">Umbral (%):</label>
+            <input type="number" id="low-balance-threshold" min="5" max="50" value="20" class="small-input">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label class="toggle-switch">
+            <input type="checkbox" id="goal-reminders" checked>
+            <span class="toggle-slider"></span>
+            <span class="toggle-label">Recordatorios de metas de ahorro</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Exportar Datos</h3>
+      <p>Descarga tus datos financieros para hacer copias de seguridad o análisis externos.</p>
+      <div class="export-buttons">
+        <button id="export-all" class="btn-primary">Exportar Todos los Datos</button>
+        <button id="export-expenses" class="btn-secondary">Exportar Gastos</button>
+        <button id="export-incomes" class="btn-secondary">Exportar Ingresos</button>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Tema</h3>
+      <div class="theme-options">
+        <button id="theme-light" class="theme-button active">
+          <div class="theme-preview light"></div>
+          <span>Claro</span>
+        </button>
+        <button id="theme-dark" class="theme-button">
+          <div class="theme-preview dark"></div>
+          <span>Oscuro</span>
+        </button>
+        <button id="theme-system" class="theme-button">
+          <div class="theme-preview system"></div>
+          <span>Sistema</span>
+        </button>
+      </div>
+    </div>
+    
+    <button id="save-settings" class="btn-primary">Guardar Configuración</button>
+  </div>
+</div>
 
-  if (position === "top") {
-    tooltip.style.bottom = `${window.innerHeight - rect.top + 10}px`
-    tooltip.style.left = `${rect.left + (rect.width / 2) - 150}px`
-  } else {
-    tooltip.style.top = `${rect.bottom + 10}px`
-    tooltip.style.left = `${rect.left + (rect.width / 2) - 150}px`
-  }
+<!-- Confirmation Modal -->
+<div id="planning-delete-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-delete">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <div id="planning-delete-details"></div>
+        <div class="modal-buttons">
+            <button id="planning-cancel-delete" class="btn-secondary">Cancelar</button>
+            <button id="planning-confirm-delete" class="btn-danger">Eliminar</button>
+        </div>
+    </div>
+</div>
 
-  // Show the tooltip
-  tooltip.style.display = "block"
+<!-- Success Modal -->
+<div id="success-modal" class="modal">
+    <div class="modal-content success-modal-content">
+        <span class="close-success">&times;</span>
+        <div class="success-icon">✓</div>
+        <h2 id="success-title">Operación Exitosa</h2>
+        <p id="success-message">La operación se ha completado correctamente.</p>
+        <button id="success-ok" class="btn-primary">Aceptar</button>
+    </div>
+</div>
 
-  // Add event listeners
-  const closeButton = tooltip.querySelector(".tooltip-close")
-  const actionButton = tooltip.querySelector(".tooltip-button")
+<!-- Añadir modal de notificaciones -->
+<div id="notifications-modal" class="modal">
+  <div class="modal-content notifications-modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>Notificaciones</h2>
+    <div class="notifications-header">
+      <button id="mark-all-read" class="btn-secondary">Marcar todas como leídas</button>
+      <button id="clear-notifications" class="btn-danger">Borrar todas</button>
+    </div>
+    <div id="notifications-list" class="notifications-list">
+      <p class="no-notifications">No tienes notificaciones.</p>
+    </div>
+  </div>
+</div>
 
-  closeButton.addEventListener("click", () => {
-    tooltip.style.display = "none"
-    if (onComplete) onComplete()
-  })
+<!-- Payment Modal -->
+<div id="payment-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Registrar Pago</h2>
+        <div id="payment-details"></div>
+        <button id="confirm-payment" class="btn-primary">Confirmar Pago</button>
+    </div>
+</div>
 
-  actionButton.addEventListener("click", () => {
-    tooltip.style.display = "none"
-    if (onComplete) onComplete()
-  })
-}
+<!-- Delete Confirmation Modal -->
+<div id="delete-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-delete">&times;</span>
+        <h2>Confirmar Eliminación</h2>
+        <div id="delete-details"></div>
+        <div class="modal-buttons">
+            <button id="cancel-delete" class="btn-secondary">Cancelar</button>
+            <button id="confirm-delete" class="btn-danger">Eliminar</button>
+        </div>
+    </div>
+</div>
 
-// Make functions available globally
-window.toggleCompleteExpense = toggleCompleteExpense
-window.confirmDeletePlannedExpense = confirmDeletePlannedExpense
-window.switchToIncomeTab = switchToIncomeTab
-window.editMonthlyIncome = editMonthlyIncome
-window.confirmDeleteExtraIncome = confirmDeleteExtraIncome
-window.deleteExtraIncomeConfirmed = deleteExtraIncomeConfirmed
-
-// Initialize the app
-init()
+<script src="planificacion.js"></script>
+<script src="chart.js"></script>
+<script src="statistics.js"></script>
+<script src="savings-goals.js"></script>
+<script src="calendar.js"></script>
+<script src="notifications.js"></script>
+<script src="settings.js"></script>
+</body>
+</html>
 
