@@ -206,6 +206,7 @@
                         <label for="planning-date">Fecha Estimada:</label>
                         <input type="date" id="planning-date" required>
                     </div>
+<<<<<<< HEAD
 
                     <div class="form-group checkbox-container">
                         <label class="custom-checkbox">
@@ -224,6 +225,98 @@
                             </div>
                         </div>
                         <p class="recurring-info">Este gasto se repetirá automáticamente cada mes durante el período seleccionado.</p>
+=======
+                </div>
+            </div>
+            
+            <div class="tab-content" id="balance-tab">
+                <div class="card">
+                    <h2>Saldo Disponible Mensual</h2>
+                    <div id="income-summary"></div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="register-tab">
+                <div class="card">
+                    <h2>Nuevo Gasto Planificado</h2>
+                    <form id="planning-form">
+                        <div class="form-group">
+                            <label for="planning-name">Descripción del Gasto:</label>
+                            <input type="text" id="planning-name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-amount">Monto Estimado:</label>
+                            <input type="number" id="planning-amount" min="1" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-category">Categoría:</label>
+                            <select id="planning-category" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="hogar">Hogar</option>
+                                <option value="transporte">Transporte</option>
+                                <option value="alimentacion">Alimentación</option>
+                                <option value="salud">Salud</option>
+                                <option value="educacion">Educación</option>
+                                <option value="entretenimiento">Entretenimiento</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-priority">Prioridad:</label>
+                            <select id="planning-priority" required>
+                                <option value="">Seleccionar prioridad</option>
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-date">Fecha Estimada:</label>
+                            <input type="date" id="planning-date" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="planning-notes">Notas Adicionales:</label>
+                            <textarea id="planning-notes" rows="3"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary planning-btn">Registrar Gasto</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="pending-tab">
+                <div class="expenses-container">
+                    <h2>Gastos Pendientes</h2>
+                    <div class="planning-filters">
+                        <div class="filter-group">
+                            <label for="filter-category">Filtrar por Categoría:</label>
+                            <select id="filter-category">
+                                <option value="todos">Todos</option>
+                                <option value="hogar">Hogar</option>
+                                <option value="transporte">Transporte</option>
+                                <option value="alimentacion">Alimentación</option>
+                                <option value="salud">Salud</option>
+                                <option value="educacion">Educación</option>
+                                <option value="entretenimiento">Entretenimiento</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-priority">Filtrar por Prioridad:</label>
+                            <select id="filter-priority">
+                                <option value="todos">Todos</option>
+                                <option value="alta">Alta</option>
+                                <option value="media">Media</option>
+                                <option value="baja">Baja</option>
+                            </select>
+                        </div>
+                        <button id="apply-filters" class="btn-secondary">Aplicar Filtros</button>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
                     </div>
 
                     <div class="form-group">

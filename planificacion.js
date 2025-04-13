@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,10 +22,827 @@
       <div class="notification-icon" id="notification-icon">
           <i class="notification-bell">🔔</i>
           <span id="notification-counter" class="notification-counter">0</span>
+=======
+// DOM Elements
+const planningForm = document.getElementById("planning-form")
+const incomeForm = document.getElementById("income-form")
+const extraIncomeForm = document.getElementById("extra-income-form")
+const planningPendingList = document.getElementById("planning-pending-list")
+const planningCompletedList = document.getElementById("planning-completed-list")
+const planningSummary = document.getElementById("planning-summary")
+const incomeSummary = document.getElementById("income-summary")
+const incomeHistoryList = document.getElementById("income-history-list")
+const totalExpensesSummary = document.getElementById("total-expenses-summary")
+const filterCategory = document.getElementById("filter-category")
+const filterPriority = document.getElementById("filter-priority")
+const applyFiltersBtn = document.getElementById("apply-filters")
+
+// Delete modal elements
+const deleteModal = document.getElementById("planning-delete-modal")
+const closeDeleteModal = document.querySelector(".close-delete")
+const deleteDetails = document.getElementById("planning-delete-details")
+const confirmDelete = document.getElementById("planning-confirm-delete")
+const cancelDelete = document.getElementById("planning-cancel-delete")
+
+// Success modal elements
+const successModal = document.getElementById("success-modal")
+const closeSuccessModal = document.querySelector(".close-success")
+const successTitle = document.getElementById("success-title")
+const successMessage = document.getElementById("success-message")
+const successOk = document.getElementById("success-ok")
+
+// Global variables
+let plannedExpenses = JSON.parse(localStorage.getItem("plannedExpenses")) || []
+const monthlyIncomes = JSON.parse(localStorage.getItem("monthlyIncomes")) || []
+let extraIncomes = JSON.parse(localStorage.getItem("extraIncomes")) || []
+let currentExpenseToDelete = null
+let currentExtraIncomeToDelete = null
+const activeFilters = {
+  category: "todos",
+  priority: "todos",
+}
+
+// Format currency with thousand separators (using dots)
+function formatCurrency(amount) {
+  return amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&.")
+}
+
+// Format month (YYYY-MM) to readable format
+function formatMonth(monthStr) {
+  const [year, month] = monthStr.split("-")
+  const date = new Date(Number.parseInt(year), Number.parseInt(month) - 1, 1)
+  return date.toLocaleString("default", { month: "long", year: "numeric" })
+}
+
+// Get current month in YYYY-MM format
+function getCurrentMonth() {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`
+}
+
+// Initialize the app
+function init() {
+  // Set default date to today
+  document.getElementById("planning-date").valueAsDate = new Date()
+
+  // Set default month to current month
+  document.getElementById("income-month").value = getCurrentMonth()
+  document.getElementById("extra-income-month").value = getCurrentMonth()
+
+  // Initialize tabs
+  initializeTabs()
+
+  renderPlannedExpenses()
+  updatePlanningSummary()
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+  renderIncomeHistory()
+
+  // Event listeners
+  planningForm.addEventListener("submit", addPlannedExpense)
+  incomeForm.addEventListener("submit", saveIncome)
+  extraIncomeForm.addEventListener("submit", addExtraIncome)
+
+  // Delete modal events
+  closeDeleteModal.addEventListener("click", () => (deleteModal.style.display = "none"))
+  confirmDelete.addEventListener("click", () => {
+    if (currentExpenseToDelete) {
+      deletePlannedExpense(currentExpenseToDelete)
+      deleteModal.style.display = "none"
+      currentExpenseToDelete = null
+    } else if (currentExtraIncomeToDelete) {
+      deleteExtraIncomeConfirmed(currentExtraIncomeToDelete)
+      deleteModal.style.display = "none"
+      currentExtraIncomeToDelete = null
+    }
+  })
+  cancelDelete.addEventListener("click", () => {
+    deleteModal.style.display = "none"
+    currentExpenseToDelete = null
+    currentExtraIncomeToDelete = null
+  })
+
+  // Success modal events
+  closeSuccessModal.addEventListener("click", () => (successModal.style.display = "none"))
+  successOk.addEventListener("click", () => (successModal.style.display = "none"))
+
+  // Filter events
+  applyFiltersBtn.addEventListener("click", applyFilters)
+
+  // Close modals when clicking outside
+  window.addEventListener("click", (e) => {
+    if (e.target === deleteModal) {
+      deleteModal.style.display = "none"
+      currentExpenseToDelete = null
+      currentExtraIncomeToDelete = null
+    }
+    if (e.target === successModal) {
+      successModal.style.display = "none"
+    }
+  })
+
+  // Check for tour continuation
+  checkTourContinuation()
+}
+
+// Show success modal
+function showSuccessModal(title, message) {
+  successTitle.textContent = title
+  successMessage.textContent = message
+  successModal.style.display = "block"
+}
+
+// Save income
+function saveIncome(e) {
+  e.preventDefault()
+
+  const month = document.getElementById("income-month").value
+  const amount = Number.parseFloat(document.getElementById("monthly-income").value)
+  const notes = document.getElementById("income-notes").value
+
+  if (!month || isNaN(amount) || amount <= 0) {
+    alert("Por favor, complete todos los campos correctamente.")
+    return
+  }
+
+  // Check if income for this month already exists
+  const existingIndex = monthlyIncomes.findIndex((income) => income.month === month)
+
+  if (existingIndex >= 0) {
+    // Update existing income
+    monthlyIncomes[existingIndex] = {
+      ...monthlyIncomes[existingIndex],
+      amount,
+      notes,
+      updatedAt: new Date().toISOString(),
+    }
+  } else {
+    // Add new income
+    const incomeEntry = {
+      id: Date.now().toString(),
+      month,
+      amount,
+      notes,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    monthlyIncomes.push(incomeEntry)
+  }
+
+  saveMonthlyIncomes()
+
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+  renderIncomeHistory()
+
+  // Show success modal with continue tour button if we're in tour mode
+  if (localStorage.getItem("tourInProgress") === "true") {
+    showSuccessModalWithTourContinue(
+      "Sueldo Guardado",
+      `El sueldo de ${formatMonth(month)} ha sido guardado correctamente.`,
+      "extra-income",
+    )
+  } else {
+    // Regular success modal
+    showSuccessModal("Sueldo Guardado", `El sueldo de ${formatMonth(month)} ha sido guardado correctamente.`)
+  }
+
+  // Reset form
+  document.getElementById("income-notes").value = ""
+}
+
+// Add extra income
+function addExtraIncome(e) {
+  e.preventDefault()
+
+  const month = document.getElementById("extra-income-month").value
+  const description = document.getElementById("extra-income-description").value
+  const amount = Number.parseFloat(document.getElementById("extra-income-amount").value)
+
+  if (!month || !description || isNaN(amount) || amount <= 0) {
+    alert("Por favor, complete todos los campos correctamente.")
+    return
+  }
+
+  const extraIncome = {
+    id: Date.now().toString(),
+    month,
+    description,
+    amount,
+    createdAt: new Date().toISOString(),
+  }
+
+  extraIncomes.push(extraIncome)
+  saveExtraIncomes()
+
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+  renderIncomeHistory()
+
+  // Show success modal with continue tour button if we're in tour mode
+  if (localStorage.getItem("tourInProgress") === "true") {
+    showSuccessModalWithTourContinue(
+      "Ingreso Extra Agregado",
+      `El ingreso extra "${description}" para ${formatMonth(month)} ha sido agregado correctamente.`,
+      "planning",
+    )
+  } else {
+    // Regular success modal
+    showSuccessModal(
+      "Ingreso Extra Agregado",
+      `El ingreso extra "${description}" para ${formatMonth(month)} ha sido agregado correctamente.`,
+    )
+  }
+
+  // Reset form
+  document.getElementById("extra-income-description").value = ""
+  document.getElementById("extra-income-amount").value = ""
+}
+
+// Save monthly incomes to localStorage
+function saveMonthlyIncomes() {
+  localStorage.setItem("monthlyIncomes", JSON.stringify(monthlyIncomes))
+}
+
+// Save extra incomes to localStorage
+function saveExtraIncomes() {
+  localStorage.setItem("extraIncomes", JSON.stringify(extraIncomes))
+}
+
+// Render income history
+function renderIncomeHistory() {
+  incomeHistoryList.innerHTML = ""
+
+  if (monthlyIncomes.length === 0 && extraIncomes.length === 0) {
+    incomeHistoryList.innerHTML = '<p class="no-expenses">No hay registros de ingresos.</p>'
+    return
+  }
+
+  // Create a combined list of all incomes
+  const allIncomes = [
+    ...monthlyIncomes.map((income) => ({
+      ...income,
+      type: "monthly",
+      date: income.updatedAt || income.createdAt,
+    })),
+    ...extraIncomes.map((income) => ({
+      ...income,
+      type: "extra",
+      date: income.createdAt,
+    })),
+  ]
+
+  // Sort by date (newest first) and then by month
+  allIncomes.sort((a, b) => {
+    // First sort by month (most recent month first)
+    const monthA = a.month
+    const monthB = b.month
+    if (monthA !== monthB) {
+      return monthB.localeCompare(monthA)
+    }
+    // Then sort by date (newest first)
+    return new Date(b.date) - new Date(a.date)
+  })
+
+  // Group by month
+  const incomesByMonth = {}
+
+  allIncomes.forEach((income) => {
+    if (!incomesByMonth[income.month]) {
+      incomesByMonth[income.month] = {
+        month: income.month,
+        formattedMonth: formatMonth(income.month),
+        incomes: [],
+      }
+    }
+    incomesByMonth[income.month].incomes.push(income)
+  })
+
+  // Render each month
+  Object.values(incomesByMonth).forEach((monthData) => {
+    const monthContainer = document.createElement("div")
+    monthContainer.className = "income-month-container"
+
+    const monthHeader = document.createElement("div")
+    monthHeader.className = "income-month-header"
+    monthHeader.innerHTML = `
+          <h4>${monthData.formattedMonth}</h4>
+      `
+
+    monthContainer.appendChild(monthHeader)
+
+    // Calculate total for this month
+    let monthlyBase = 0
+    let monthlyExtras = 0
+
+    // Render each income in this month
+    monthData.incomes.forEach((income) => {
+      const incomeItem = document.createElement("div")
+      incomeItem.className = `income-history-item ${income.type === "monthly" ? "monthly-income" : "extra-income"}`
+
+      const date = new Date(income.date)
+      const formattedDate = date.toLocaleDateString() + " " + date.toLocaleTimeString()
+
+      if (income.type === "monthly") {
+        monthlyBase = income.amount
+        incomeItem.innerHTML = `
+                  <div class="income-history-date">${formattedDate}</div>
+                  <div class="income-history-title">Sueldo Base</div>
+                  <div class="income-history-amount">$${formatCurrency(income.amount)}</div>
+                  ${income.notes ? `<div class="income-history-notes">${income.notes}</div>` : ""}
+                  <button class="edit-income-btn" onclick="editMonthlyIncome('${income.month}')">Editar</button>
+              `
+      } else {
+        monthlyExtras += income.amount
+        incomeItem.innerHTML = `
+                  <div class="income-history-date">${formattedDate}</div>
+                  <div class="income-history-title">${income.description}</div>
+                  <div class="income-history-amount extra">+$${formatCurrency(income.amount)}</div>
+                  <button class="delete-income-btn" onclick="confirmDeleteExtraIncome('${income.id}')">Eliminar</button>
+              `
+      }
+
+      monthContainer.appendChild(incomeItem)
+    })
+
+    // Add month summary
+    const monthSummary = document.createElement("div")
+    monthSummary.className = "income-month-summary"
+    monthSummary.innerHTML = `
+          <div class="income-month-total">
+              <span>Total del Mes:</span>
+              <span>$${formatCurrency(monthlyBase + monthlyExtras)}</span>
+          </div>
+          ${
+            monthlyExtras > 0
+              ? `
+              <div class="income-month-breakdown">
+                  <div>Sueldo Base: $${formatCurrency(monthlyBase)}</div>
+                  <div>Ingresos Extra: +$${formatCurrency(monthlyExtras)}</div>
+              </div>
+          `
+              : ""
+          }
+      `
+
+    monthContainer.appendChild(monthSummary)
+    incomeHistoryList.appendChild(monthContainer)
+  })
+}
+
+// Edit monthly income
+function editMonthlyIncome(month) {
+  const income = monthlyIncomes.find((inc) => inc.month === month)
+  if (!income) return
+
+  // Establecer los valores en el formulario
+  document.getElementById("income-month").value = income.month
+  document.getElementById("monthly-income").value = income.amount
+  document.getElementById("income-notes").value = income.notes || ""
+
+  // Hacer scroll al formulario para que sea visible
+  document.getElementById("income-form").scrollIntoView({ behavior: "smooth" })
+
+  // Mostrar un mensaje para indicar al usuario que puede editar
+  showSuccessModal(
+    "Editar Sueldo",
+    `Puede modificar el sueldo de ${formatMonth(month)} en el formulario. Haga clic en "Guardar Sueldo" para confirmar los cambios.`,
+  )
+
+  // Switch to income tab
+  switchToIncomeTab()
+}
+
+// Confirm delete extra income
+function confirmDeleteExtraIncome(id) {
+  const income = extraIncomes.find((inc) => inc.id === id)
+  if (!income) return
+
+  // Set the current extra income to delete
+  currentExtraIncomeToDelete = id
+
+  // Show delete confirmation modal
+  deleteDetails.innerHTML = `
+    <p>¿Estás seguro que deseas eliminar el ingreso extra <span class="expense-name-highlight">${income.description}</span>?</p>
+    <p>Monto: <strong>$${formatCurrency(income.amount)}</strong> - Mes: <strong>${formatMonth(income.month)}</strong></p>
+    <p>Esta acción no se puede deshacer.</p>
+  `
+
+  deleteModal.style.display = "block"
+}
+
+// Delete extra income (after confirmation)
+function deleteExtraIncomeConfirmed(id) {
+  const income = extraIncomes.find((inc) => inc.id === id)
+  if (!income) return
+
+  const description = income.description
+  const month = formatMonth(income.month)
+
+  extraIncomes = extraIncomes.filter((income) => income.id !== id)
+  saveExtraIncomes()
+  renderIncomeHistory()
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+
+  // Show success modal
+  showSuccessModal(
+    "Ingreso Extra Eliminado",
+    `El ingreso extra "${description}" para ${month} ha sido eliminado correctamente.`,
+  )
+}
+
+// Initialize tabs functionality
+function initializeTabs() {
+  const tabButtons = document.querySelectorAll(".tab-button")
+  const tabContents = document.querySelectorAll(".tab-content")
+
+  tabButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Remove active class from all buttons and contents
+      tabButtons.forEach((btn) => btn.classList.remove("active"))
+      tabContents.forEach((content) => content.classList.remove("active"))
+
+      // Add active class to clicked button and corresponding content
+      button.classList.add("active")
+      const tabId = `${button.dataset.tab}-tab`
+      document.getElementById(tabId).classList.add("active")
+    })
+  })
+}
+
+// Add a new planned expense
+function addPlannedExpense(e) {
+  e.preventDefault()
+
+  const name = document.getElementById("planning-name").value
+  const amount = Number.parseFloat(document.getElementById("planning-amount").value)
+  const category = document.getElementById("planning-category").value
+  const priority = document.getElementById("planning-priority").value
+  const dateStr = document.getElementById("planning-date").value
+  const notes = document.getElementById("planning-notes").value
+
+  if (!name || isNaN(amount) || !category || !priority || !dateStr || amount <= 0) {
+    alert("Por favor, complete todos los campos correctamente.")
+    return
+  }
+
+  const plannedExpense = {
+    id: Date.now().toString(),
+    name,
+    amount,
+    category,
+    priority,
+    date: dateStr,
+    notes,
+    createdAt: new Date().toISOString(),
+    completed: false,
+  }
+
+  plannedExpenses.push(plannedExpense)
+  savePlannedExpenses()
+  renderPlannedExpenses()
+  updatePlanningSummary()
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+
+  // Show success modal with continue tour button if we're in tour mode
+  if (localStorage.getItem("tourInProgress") === "true") {
+    showSuccessModalWithTourContinue(
+      "Gasto Registrado",
+      `El gasto "${name}" ha sido registrado correctamente.`,
+      "summary",
+    )
+  } else {
+    // Regular success modal
+    showSuccessModal("Gasto Registrado", `El gasto "${name}" ha sido registrado correctamente.`)
+  }
+
+  // Reset form
+  planningForm.reset()
+  document.getElementById("planning-date").valueAsDate = new Date()
+
+  // Switch to summary tab after adding expense
+  const summaryTabButton = document.querySelector('.tab-button[data-tab="summary"]')
+  if (summaryTabButton) {
+    summaryTabButton.click()
+  }
+}
+
+// Save planned expenses to localStorage
+function savePlannedExpenses() {
+  localStorage.setItem("plannedExpenses", JSON.stringify(plannedExpenses))
+}
+
+// Apply filters to the planned expenses list
+function applyFilters() {
+  activeFilters.category = filterCategory.value
+  activeFilters.priority = filterPriority.value
+  renderPlannedExpenses()
+}
+
+// Render all planned expenses
+function renderPlannedExpenses() {
+  planningPendingList.innerHTML = ""
+  planningCompletedList.innerHTML = ""
+
+  if (plannedExpenses.length === 0) {
+    planningPendingList.innerHTML = '<p class="no-expenses">No hay gastos planificados pendientes.</p>'
+    planningCompletedList.innerHTML = '<p class="no-expenses">No hay gastos planificados completados.</p>'
+    return
+  }
+
+  // Separate pending and completed expenses
+  const pendingExpenses = plannedExpenses.filter((expense) => !expense.completed)
+  const completedExpenses = plannedExpenses.filter((expense) => expense.completed)
+
+  // Filter pending expenses based on active filters
+  let filteredPendingExpenses = pendingExpenses
+
+  if (activeFilters.category !== "todos") {
+    filteredPendingExpenses = filteredPendingExpenses.filter((expense) => expense.category === activeFilters.category)
+  }
+
+  if (activeFilters.priority !== "todos") {
+    filteredPendingExpenses = filteredPendingExpenses.filter((expense) => expense.priority === activeFilters.priority)
+  }
+
+  // Sort expenses by date (closest first)
+  filteredPendingExpenses.sort((a, b) => new Date(a.date) - new Date(b.date))
+  completedExpenses.sort((a, b) => new Date(b.date) - new Date(a.date)) // Completed sorted newest first
+
+  // Render pending expenses
+  if (filteredPendingExpenses.length === 0) {
+    planningPendingList.innerHTML =
+      '<p class="no-expenses">No hay gastos pendientes que coincidan con los filtros seleccionados.</p>'
+  } else {
+    renderExpensesList(filteredPendingExpenses, planningPendingList)
+  }
+
+  // Render completed expenses
+  if (completedExpenses.length === 0) {
+    planningCompletedList.innerHTML = '<p class="no-expenses">No hay gastos completados.</p>'
+  } else {
+    renderExpensesList(completedExpenses, planningCompletedList)
+  }
+}
+
+// Render a list of expenses to a specific container
+function renderExpensesList(expenses, container) {
+  expenses.forEach((expense) => {
+    const expenseCard = document.createElement("div")
+    expenseCard.className = expense.completed ? "completed-expense-card" : "expense-card planning-card"
+
+    const expenseDate = new Date(expense.date)
+    const formattedDate = expenseDate.toLocaleDateString()
+    const createdDate = new Date(expense.createdAt)
+    const formattedCreatedDate = createdDate.toLocaleDateString()
+
+    // Create the header (always visible)
+    const expenseHeader = document.createElement("div")
+    expenseHeader.className = expense.completed ? "completed-expense-header" : "expense-header"
+    expenseHeader.innerHTML = `
+          <div class="expense-title-container">
+              <span class="expense-toggle">▶</span>
+              <div class="expense-title">${expense.name}</div>
+          </div>
+          <div class="expense-summary">
+              <div class="expense-summary-item">Monto: $${formatCurrency(expense.amount)}</div>
+              <div class="expense-summary-item priority-badge ${expense.priority}">${getPriorityText(expense.priority)}</div>
+              <div class="expense-actions">
+                  <button class="complete-button ${expense.completed ? "completed" : ""}" onclick="toggleCompleteExpense('${expense.id}', event)">
+                      ${expense.completed ? "Completado" : "Marcar Completado"}
+                  </button>
+                  <button class="delete-button" onclick="confirmDeletePlannedExpense('${expense.id}', event)">Eliminar</button>
+              </div>
+          </div>
+      `
+
+    // Create the content (collapsible)
+    const expenseContent = document.createElement("div")
+    expenseContent.className = "expense-content"
+    expenseContent.innerHTML = `
+          <div class="expense-date">Registrado: ${formattedCreatedDate}</div>
+          <div class="expense-details">
+              <div class="expense-detail"><strong>Monto:</strong> $${formatCurrency(expense.amount)}</div>
+              <div class="expense-detail"><strong>Categoría:</strong> ${getCategoryText(expense.category)}</div>
+              <div class="expense-detail"><strong>Prioridad:</strong> ${getPriorityText(expense.priority)}</div>
+              <div class="expense-detail"><strong>Fecha Estimada:</strong> ${formattedDate}</div>
+              ${expense.notes ? `<div class="expense-detail"><strong>Notas:</strong> ${expense.notes}</div>` : ""}
+              <div class="expense-detail"><strong>Estado:</strong> ${expense.completed ? '<span class="status-paid">Completado</span>' : '<span class="status-pending">Pendiente</span>'}</div>
+          </div>
+      `
+
+    expenseCard.appendChild(expenseHeader)
+    expenseCard.appendChild(expenseContent)
+
+    // Add toggle functionality
+    expenseHeader.addEventListener("click", () => {
+      const toggle = expenseHeader.querySelector(".expense-toggle")
+      toggle.classList.toggle("open")
+      expenseContent.classList.toggle("open")
+    })
+
+    container.appendChild(expenseCard)
+  })
+}
+
+// Get text representation of category
+function getCategoryText(category) {
+  const categories = {
+    hogar: "Hogar",
+    transporte: "Transporte",
+    alimentacion: "Alimentación",
+    salud: "Salud",
+    educacion: "Educación",
+    entretenimiento: "Entretenimiento",
+    otros: "Otros",
+  }
+  return categories[category] || category
+}
+
+// Get text representation of priority
+function getPriorityText(priority) {
+  const priorities = {
+    alta: "Alta",
+    media: "Media",
+    baja: "Baja",
+  }
+  return priorities[priority] || priority
+}
+
+// Toggle expense completion status
+function toggleCompleteExpense(expenseId, event) {
+  event.stopPropagation()
+
+  const expenseIndex = plannedExpenses.findIndex((expense) => expense.id === expenseId)
+  if (expenseIndex === -1) return
+
+  const wasCompleted = plannedExpenses[expenseIndex].completed
+  plannedExpenses[expenseIndex].completed = !wasCompleted
+
+  savePlannedExpenses()
+  renderPlannedExpenses()
+  updatePlanningSummary()
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+
+  // Show success modal
+  showSuccessModal(
+    wasCompleted ? "Gasto Reactivado" : "Gasto Completado",
+    wasCompleted
+      ? `El gasto "${plannedExpenses[expenseIndex].name}" ha sido marcado como pendiente.`
+      : `El gasto "${plannedExpenses[expenseIndex].name}" ha sido marcado como completado.`,
+  )
+}
+
+// Confirm delete planned expense
+function confirmDeletePlannedExpense(expenseId, event) {
+  // Stop the click event from propagating to the parent (which would toggle the expense)
+  event.stopPropagation()
+
+  const expense = plannedExpenses.find((exp) => exp.id === expenseId)
+  if (!expense) return
+
+  // Set the current expense to delete
+  currentExpenseToDelete = expenseId
+
+  // Show delete confirmation modal
+  deleteDetails.innerHTML = `
+      <p>¿Estás seguro que deseas eliminar el gasto planificado <span class="expense-name-highlight">${expense.name}</span>?</p>
+      <p>Este gasto está <strong>${expense.completed ? "completado" : "pendiente"}</strong>.</p>
+      <p>Esta acción no se puede deshacer.</p>
+  `
+
+  deleteModal.style.display = "block"
+}
+
+// Delete planned expense
+function deletePlannedExpense(expenseId) {
+  const expense = plannedExpenses.find((exp) => exp.id === expenseId)
+  const expenseName = expense ? expense.name : "Gasto"
+
+  plannedExpenses = plannedExpenses.filter((expense) => expense.id !== expenseId)
+  savePlannedExpenses()
+  renderPlannedExpenses()
+  updatePlanningSummary()
+  updateIncomeSummary()
+  updateTotalExpensesSummary()
+
+  // Show success modal
+  showSuccessModal("Gasto Eliminado", `El gasto "${expenseName}" ha sido eliminado correctamente.`)
+}
+
+// Update planning summary
+function updatePlanningSummary() {
+  if (plannedExpenses.length === 0) {
+    planningSummary.innerHTML = "<p>No hay gastos planificados registrados.</p>"
+    return
+  }
+
+  // Calculate totals
+  let totalPending = 0
+  let totalCompleted = 0
+  let pendingCount = 0
+  let completedCount = 0
+  let highPriorityCount = 0
+  let highPriorityAmount = 0
+
+  // Group expenses by category
+  const categoryTotals = {}
+
+  // Group expenses by month
+  const monthlyTotals = {}
+
+  plannedExpenses.forEach((expense) => {
+    const amount = expense.amount
+
+    // Add to category totals
+    if (!categoryTotals[expense.category]) {
+      categoryTotals[expense.category] = {
+        name: getCategoryText(expense.category),
+        amount: 0,
+        count: 0,
+        pendingAmount: 0,
+        completedAmount: 0,
+      }
+    }
+    categoryTotals[expense.category].amount += amount
+    categoryTotals[expense.category].count++
+
+    if (expense.completed) {
+      categoryTotals[expense.category].completedAmount += amount
+    } else {
+      categoryTotals[expense.category].pendingAmount += amount
+    }
+
+    // Add to monthly totals
+    const expenseDate = new Date(expense.date)
+    const monthYear = `${expenseDate.getMonth() + 1}/${expenseDate.getFullYear()}`
+
+    if (!monthlyTotals[monthYear]) {
+      monthlyTotals[monthYear] = {
+        month: expenseDate.toLocaleString("default", { month: "long" }),
+        year: expenseDate.getFullYear(),
+        amount: 0,
+        pendingAmount: 0,
+        completedAmount: 0,
+        count: 0,
+        date: expenseDate,
+      }
+    }
+    monthlyTotals[monthYear].amount += amount
+    monthlyTotals[monthYear].count++
+
+    if (expense.completed) {
+      monthlyTotals[monthYear].completedAmount += amount
+      totalCompleted += amount
+      completedCount++
+    } else {
+      monthlyTotals[monthYear].pendingAmount += amount
+      totalPending += amount
+      pendingCount++
+
+      if (expense.priority === "alta") {
+        highPriorityCount++
+        highPriorityAmount += amount
+      }
+    }
+  })
+
+  // Sort months chronologically
+  const sortedMonths = Object.keys(monthlyTotals).sort((a, b) => {
+    const [monthA, yearA] = a.split("/").map(Number)
+    const [monthB, yearB] = b.split("/").map(Number)
+
+    if (yearA !== yearB) return yearA - yearB
+    return monthA - monthB
+  })
+
+  // Create summary HTML
+  const summaryHTML = `
+      <div class="summary-grid">
+          <div class="summary-card">
+              <div class="summary-title">Gastos Pendientes</div>
+              <div class="summary-amount">$${formatCurrency(totalPending)}</div>
+              <div class="summary-subtitle">${pendingCount} gastos planificados</div>
+          </div>
+          <div class="summary-card">
+              <div class="summary-title">Gastos Completados</div>
+              <div class="summary-amount positive">$${formatCurrency(totalCompleted)}</div>
+              <div class="summary-subtitle">${completedCount} gastos realizados</div>
+          </div>
+          <div class="summary-card priority-high">
+              <div class="summary-title">Prioridad Alta</div>
+              <div class="summary-amount">$${formatCurrency(highPriorityAmount)}</div>
+              <div class="summary-subtitle">${highPriorityCount} gastos prioritarios</div>
+          </div>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
       </div>
   </div>
 </div>
 
+<<<<<<< HEAD
 <!-- Reemplazar la sección del menú compacto por este código actualizado -->
 <div id="compact-menu" class="compact-menu">
   <div class="compact-menu-content">
@@ -33,6 +851,33 @@
         <span class="menu-icon">📊</span>
         <span>Resumen</span>
         <span class="nav-arrow">▶</span>
+=======
+  // Create category breakdown
+  let categoryHTML = `
+      <div class="summary-section">
+          <h3>Gastos por Categoría</h3>
+          <div class="category-breakdown">
+  `
+
+  Object.values(categoryTotals)
+    .sort((a, b) => b.amount - a.amount)
+    .forEach((category) => {
+      categoryHTML += `
+          <div class="category-item">
+              <div class="category-name">${category.name}</div>
+              <div class="category-amount">$${formatCurrency(category.amount)}</div>
+              <div class="category-breakdown-details">
+                  <div>Pendiente: $${formatCurrency(category.pendingAmount)}</div>
+                  <div>Completado: $${formatCurrency(category.completedAmount)}</div>
+              </div>
+              <div class="category-count">${category.count} gastos</div>
+          </div>
+      `
+    })
+
+  categoryHTML += `
+          </div>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
       </div>
       <div class="menu-group-items" id="summary-group">
         <button class="menu-item active" data-tab="summary">Resumen General</button>
@@ -95,6 +940,7 @@
   </div>
 </div>
 
+<<<<<<< HEAD
 <!-- Contenedor de pestañas (mantener esto) -->
 <div class="tabs-container">
         
@@ -103,6 +949,198 @@
             <div class="planning-summary-container card">
                 <h2>Resumen de Gastos Planificados</h2>
                 <div id="planning-summary"></div>
+=======
+  // Set the summary HTML
+  planningSummary.innerHTML = summaryHTML + categoryHTML + monthlyHTML
+}
+
+// Update income summary with available balance calculations
+function updateIncomeSummary() {
+  // Get credit card expenses from localStorage
+  const creditCardExpenses = JSON.parse(localStorage.getItem("expenses")) || []
+
+  // Group expenses by month
+  const monthlyExpenses = {}
+
+  // Process credit card expenses
+  creditCardExpenses.forEach((expense) => {
+    expense.installments.forEach((installment) => {
+      if (!installment.paid) {
+        const dueDate = new Date(installment.dueDate)
+        const monthStr = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, "0")}`
+
+        if (!monthlyExpenses[monthStr]) {
+          monthlyExpenses[monthStr] = {
+            month: monthStr,
+            formattedMonth: formatMonth(monthStr),
+            creditCardAmount: 0,
+            plannedAmount: 0,
+            totalAmount: 0,
+            creditCardDetails: [],
+            plannedDetails: [],
+          }
+        }
+
+        const amount = Number.parseFloat(installment.amount)
+        monthlyExpenses[monthStr].creditCardAmount += amount
+        monthlyExpenses[monthStr].totalAmount += amount
+
+        monthlyExpenses[monthStr].creditCardDetails.push({
+          name: expense.name,
+          installment: `${installment.number}/${expense.installmentsCount}`,
+          amount: amount,
+        })
+      }
+    })
+  })
+
+  // Process planned expenses
+  plannedExpenses.forEach((expense) => {
+    if (!expense.completed) {
+      const expenseDate = new Date(expense.date)
+      const monthStr = `${expenseDate.getFullYear()}-${String(expenseDate.getMonth() + 1).padStart(2, "0")}`
+
+      if (!monthlyExpenses[monthStr]) {
+        monthlyExpenses[monthStr] = {
+          month: monthStr,
+          formattedMonth: formatMonth(monthStr),
+          creditCardAmount: 0,
+          plannedAmount: 0,
+          totalAmount: 0,
+          creditCardDetails: [],
+          plannedDetails: [],
+        }
+      }
+
+      monthlyExpenses[monthStr].plannedAmount += expense.amount
+      monthlyExpenses[monthStr].totalAmount += expense.amount
+
+      monthlyExpenses[monthStr].plannedDetails.push({
+        name: expense.name,
+        category: getCategoryText(expense.category),
+        priority: expense.priority,
+        amount: expense.amount,
+      })
+    }
+  })
+
+  // Get current month
+  const currentDate = new Date()
+  const currentMonth = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}`
+
+  // Separate months into past, current, and future
+  const pastMonths = []
+  const futureMonths = []
+  let currentMonthData = null
+
+  Object.keys(monthlyExpenses).forEach((monthStr) => {
+    const monthDate = new Date(monthStr + "-01")
+
+    if (monthStr === currentMonth) {
+      currentMonthData = monthlyExpenses[monthStr]
+    } else if (monthDate < currentDate) {
+      // If the month is before the current month
+      pastMonths.push(monthStr)
+    } else {
+      // If the month is after the current month
+      futureMonths.push(monthStr)
+    }
+  })
+
+  // Sort months chronologically
+  pastMonths.sort()
+  futureMonths.sort()
+
+  // Create HTML for the income summary
+  let html = ""
+
+  if (Object.keys(monthlyExpenses).length === 0) {
+    html = `<p class="no-expenses">No hay gastos pendientes registrados para calcular el saldo disponible.</p>`
+  } else {
+    // Current Month Section (if exists)
+    if (currentMonthData) {
+      html += `
+                <div class="current-month-section">
+                    <h3>Saldo Disponible del Mes Actual</h3>
+                    ${renderMonthBalanceItem(currentMonthData, true)}
+                </div>
+            `
+    }
+
+    // Future Months Section
+    if (futureMonths.length > 0) {
+      html += `
+                <div class="future-months-section">
+                    <h3>Saldo Proyectado para Meses Futuros</h3>
+                    <div class="monthly-balance-list">
+            `
+
+      futureMonths.forEach((monthStr) => {
+        html += renderMonthBalanceItem(monthlyExpenses[monthStr])
+      })
+
+      html += `
+                    </div>
+                </div>
+            `
+    }
+
+    // Past Months Section
+    if (pastMonths.length > 0) {
+      html += `
+                <div class="past-months-section">
+                    <h3>Historial de Saldos de Meses Anteriores</h3>
+                    <div class="monthly-balance-list">
+            `
+
+      // Reverse to show most recent past months first
+      pastMonths.reverse().forEach((monthStr) => {
+        html += renderMonthBalanceItem(monthlyExpenses[monthStr])
+      })
+
+      html += `
+                    </div>
+                </div>
+            `
+    }
+  }
+
+  incomeSummary.innerHTML = html
+}
+
+// Helper function to render a month balance item
+function renderMonthBalanceItem(monthData, isCurrentMonth = false) {
+  // Get income for this month
+  const monthlyIncome = monthlyIncomes.find((income) => income.month === monthData.month)
+  const monthlyIncomeAmount = monthlyIncome ? monthlyIncome.amount : 0
+
+  // Get extra incomes for this month
+  const monthlyExtras = extraIncomes.filter((income) => income.month === monthData.month)
+  const extraIncomeAmount = monthlyExtras.reduce((sum, income) => sum + income.amount, 0)
+
+  // Calculate total income
+  const totalIncome = monthlyIncomeAmount + extraIncomeAmount
+
+  // Calculate available balance
+  const availableBalance = totalIncome - monthData.totalAmount
+  const balancePercentage = totalIncome > 0 ? (availableBalance / totalIncome) * 100 : 0
+
+  const balanceClass = balancePercentage < 20 ? "critical" : balancePercentage < 40 ? "warning" : "positive"
+
+  const monthItemClass = isCurrentMonth ? "monthly-balance-item current-month" : "monthly-balance-item"
+
+  return `
+        <div class="${monthItemClass}">
+            <div class="monthly-balance-header">
+                <div class="monthly-balance-date">${monthData.formattedMonth} ${isCurrentMonth ? '<span class="current-month-badge">Mes Actual</span>' : ""}</div>
+                <div class="monthly-balance-income">
+                    ${
+                      totalIncome > 0
+                        ? `<span>Ingresos: $${formatCurrency(totalIncome)}</span>`
+                        : `<span class="no-income-warning">Sin ingresos registrados</span>`
+                    }
+                </div>
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
             </div>
             
             <div class="total-expenses-container card">

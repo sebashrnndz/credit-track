@@ -1890,6 +1890,7 @@ textarea {
   background-color: #012b50;
 }
 
+<<<<<<< HEAD
 /* Añadir estilos para gastos fijos y el formulario */
 .checkbox-container {
   display: flex;
@@ -3243,12 +3244,15 @@ body.dark-theme .menu-item.active {
   background-color: #1a3a50;
 }
 
+=======
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
 /* Media queries para la página de bienvenida */
 
 /* Ajustes para la vista móvil */
 
 /* Responsive tabs */
 @media (max-width: 768px) {
+<<<<<<< HEAD
   .theme-options {
     flex-wrap: wrap;
   }
@@ -3432,6 +3436,8 @@ body.dark-theme .menu-item.active {
     padding: 12px 10px;
   }
 
+=======
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
   .app-header {
     flex-direction: column;
     align-items: center;
@@ -3909,8 +3915,6 @@ body.dark-theme .menu-item.active {
   .expense-header {
     flex-direction: column;
     align-items: flex-start;
-    padding: 4px 8px;
-    font-size: 12px;
   }
 
   .expense-actions {
@@ -3976,6 +3980,7 @@ body.dark-theme .menu-item.active {
     font-size: 1.1rem;
     font-weight: 500;
   }
+<<<<<<< HEAD
 }
 
 @media (max-width: 480px) {
@@ -4449,3 +4454,6 @@ body.dark-theme .day-details {
   }
 }
 
+=======
+}
+>>>>>>> parent of e22d6bd (version 2.2 (mejoras en registros))
