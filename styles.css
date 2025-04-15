@@ -17,7 +17,7 @@ body {
   max-width: 900px;
   /* Reduced from 1200px */
   margin: 0 auto;
-  padding: 15px;
+  /* padding: 15px; */
   /* Reduced from 20px for mobile */
 }
 
@@ -267,7 +267,7 @@ input {
 
 .expense-header {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
   padding: 15px 20px;
   background-color: #f8f9fa;
@@ -302,6 +302,9 @@ input {
 
 .expense-summary {
   display: flex;
+  /* align-items: center; */
+
+
   gap: 15px;
 }
 
@@ -514,7 +517,7 @@ input {
   display: none;
   background-color: #fff;
   border-radius: 0 0 8px 8px;
-  padding: 20px;
+  /* padding: 20px; */
 }
 
 .tab-content.active {
@@ -748,7 +751,7 @@ input {
 }
 
 .complete-button {
-  background-color: #0e3b21;
+  background-color: #137333;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -819,7 +822,7 @@ input {
 }
 
 .priority-high .summary-title {
-  color: #e74c3c;
+  color: #A50E0E;;
 }
 
 .total-summary {
@@ -939,33 +942,34 @@ textarea {
 }
 
 .priority-badge.alta {
-  background-color: #e74c3c;
-  color: white;
+  background-color: #a50e0e5b;
+  color: #A50E0E; ;
 }
 
 .priority-badge.media {
-  background-color: #f39c12;
-  color: white;
+  background-color: #c26c0352;
+  color:#C26C03 ;
 }
 
 .priority-badge.baja {
-  background-color: #3498db;
-  color: white;
+  background-color: #105c2954;
+  color: #105C29;
 }
 
 .complete-button {
-  background-color: #2ecc71;
-  color: white;
-  border: none;
+  background-color: #023d7052;
+  color: #023C70;
+  /* border: 1px solid #023C70; */
   padding: 5px 10px;
   border-radius: 4px;
+  font-weight: 600;
   cursor: pointer;
   font-size: 14px;
   transition: background-color 0.3s;
 }
 
 .complete-button:hover {
-  background-color: #27ae60;
+  background-color: #023d7075;
 }
 
 .complete-button.completed {
@@ -1033,7 +1037,7 @@ textarea {
 }
 
 .priority-high .summary-title {
-  color: #e74c3c;
+  color: #A50E0E;;
 }
 
 .total-summary {
@@ -1073,12 +1077,12 @@ textarea {
 }
 
 .pending-total {
-  background-color: #023C70;
-  color: white;
+  background-color: #023d7052;
+  color: #023C70;
 }
 
 .completed-total {
-  background-color: #27ae60;
+  background-color: #023d7052;
   color: white;
 }
 
@@ -1086,7 +1090,7 @@ textarea {
 .pending-total .summary-amount,
 .completed-total .summary-title,
 .completed-total .summary-amount {
-  color: white;
+  color: #023C70;
 }
 
 .summary-breakdown {
@@ -1244,15 +1248,15 @@ textarea {
 }
 
 .balance-bar.positive {
-  background-color: #27ae60;
+  background-color: #105C29;
 }
 
 .balance-bar.warning {
-  background-color: #f39c12;
+  background-color: #C26C03;
 }
 
 .balance-bar.critical {
-  background-color: #e74c3c;
+  background-color: #A50E0E;
 }
 
 .balance-percentage-text {
@@ -1459,7 +1463,7 @@ textarea {
 }
 
 .no-income-warning {
-  color: #e74c3c;
+  color: #A50E0E;
   font-weight: 500;
 }
 
@@ -1486,15 +1490,15 @@ textarea {
 }
 
 .balance-amount.positive {
-  color: #27ae60;
+  color: #105C29;
 }
 
 .balance-amount.warning {
-  color: #f39c12;
+  color: #C26C03;
 }
 
 .balance-amount.critical {
-  color: #e74c3c;
+  color: #A50E0E;
 }
 
 .balance-percentage {
@@ -1516,15 +1520,15 @@ textarea {
 }
 
 .balance-bar.positive {
-  background-color: #27ae60;
+  background-color: #105C29;
 }
 
 .balance-bar.warning {
-  background-color: #f39c12;
+  background-color: #C26C03;
 }
 
 .balance-bar.critical {
-  background-color: #e74c3c;
+  background-color: #A50E0E;
 }
 
 .balance-percentage-text {
@@ -1565,9 +1569,9 @@ textarea {
 }
 
 .expense-breakdown-amount {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #e74c3c;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #023C70;
   margin-bottom: 10px;
 }
 
@@ -1588,13 +1592,20 @@ textarea {
 
 .expense-breakdown-total {
   display: flex;
+  /* background-color: #023d7056; */
   justify-content: space-between;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #2c3e50;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #023c70;
+  /* padding: 3rem; */
+  border-radius: 15px;
   margin-top: 15px;
   padding-top: 15px;
   border-top: 1px dashed #ddd;
+}
+.total-gastos-mensual {
+  font-size: 1.6rem;
+  
 }
 
 .income-breakdown {
@@ -1736,9 +1747,9 @@ textarea {
 }
 
 .income-history-amount.extra {
-  color: #27ae60;
+  color: #105C29;
 }
-
+no-income-warning
 .income-history-notes {
   font-size: 0.9rem;
   color: #7f8c8d;
@@ -1750,7 +1761,7 @@ textarea {
   position: absolute;
   top: 15px;
   right: 15px;
-  background-color: #3498db;
+  background-color: #506980;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -1760,11 +1771,12 @@ textarea {
 }
 
 .delete-income-btn {
-  background-color: #e74c3c;
+  background-color: #a50e0e4b;
+  color: #A50E0E;
 }
 
 .edit-income-btn:hover {
-  background-color: #2980b9;
+  background-color: #577c9e;
 }
 
 .delete-income-btn:hover {
@@ -2171,7 +2183,7 @@ textarea {
   height: 22px;
   width: 22px;
   background-color: #fff;
-  border: 2px solid #3498db;
+  border: 2px solid #023C70;
   border-radius: 4px;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -2185,7 +2197,7 @@ textarea {
 }
 
 .custom-checkbox input:checked ~ .checkmark {
-  background-color: #3498db;
+  background-color: #023c70;
 }
 
 .checkmark:after {
@@ -2199,7 +2211,7 @@ textarea {
 }
 
 .custom-checkbox .checkmark:after {
-  left: 7px;
+  left: 6px;
   top: 3px;
   width: 5px;
   height: 10px;
@@ -2220,7 +2232,7 @@ textarea {
   transition: max-height 0.4s ease, opacity 0.4s ease, padding 0.4s ease;
   background-color: #f8f9fa;
   border-radius: 6px;
-  border-left: 3px solid #3498db;
+  border-left: 3px solid #023C70;
   margin-left: 5px;
 }
 
@@ -2262,7 +2274,7 @@ textarea {
 .pending-expenses-list .expense-card {
   padding: 0;
   margin-bottom: 12px;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid #023C70;
 }
 
 .pending-expenses-list .expense-header {
@@ -2298,7 +2310,7 @@ textarea {
 
 .pending-expenses-list .expense-actions {
   display: flex;
-  gap: 8px;
+  /* gap: 8px; */
   margin-left: auto;
 }
 
@@ -2312,15 +2324,18 @@ textarea {
 }
 
 .pending-expenses-list .priority-badge.alta {
-  background-color: #e74c3c;
+  background-color: #a50e0e5b;
+  color: #A50E0E; ;
 }
 
 .pending-expenses-list .priority-badge.media {
-  background-color: #f39c12;
+  background-color: #c26c0352;
+  color:#C26C03 ;
 }
 
 .pending-expenses-list .priority-badge.baja {
-  background-color: #27ae60;
+  background-color: #105c2954;
+  color: #105C29;
 }
 
 .pending-expenses-list .complete-button,
@@ -2383,12 +2398,12 @@ textarea {
   }
 
   .pending-expenses-list .expense-actions {
-    margin-top: 8px;
+    /* margin-top: 8px; */
     width: 100%;
     justify-content: flex-end;
   }
   .container {
-    padding: 10px 8px;
+    /* padding: 10px 8px; */
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -2404,9 +2419,9 @@ textarea {
   }
   
   .tabs {
-    margin-left: -8px;
-    margin-right: -8px;
-    width: calc(100% + 16px);
+    /* margin-left: -8px;
+    margin-right: -8px; */
+    /* width: calc(100% + 16px); */
   }
   
   .tab-button {
@@ -2415,7 +2430,7 @@ textarea {
   }
   
   .tab-content {
-    padding: 15px 10px;
+    /* padding: 15px 10px; */
   }
   
   .expense-header {
@@ -2689,7 +2704,7 @@ textarea {
   }
 
   .container {
-    padding: 10px;
+    /* padding: 10px; */
   }
 
   h1 {
@@ -2836,7 +2851,7 @@ textarea {
   }
 
   .expense-actions {
-    margin-top: 10px;
+    /* margin-top: 10px; */
   }
 
   .modal-buttons {
@@ -2850,11 +2865,12 @@ textarea {
 }
 
 .delete-button {
-  background-color: #A50E0E;
-  color: white;
+  background-color: #a50e0e49;
+  color: #A50E0E;
   border: none;
   padding: 5px 10px;
   border-radius: 4px;
+  font-weight: 500;
   cursor: pointer;
   font-size: 14px;
   margin-left: 10px;
@@ -2862,13 +2878,13 @@ textarea {
 }
 
 .delete-button:hover {
-  background-color: #830c0c;
+  background-color: #830c0c6b;
 }
 
 .expense-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  /* gap: 10px; */
 }
 
 .modal-buttons {
@@ -2897,7 +2913,8 @@ textarea {
   }
 
   .expense-actions {
-    margin-top: 10px;
+    /* margin-top: 10px; */
+    padding-bottom: 10px;
   }
 
   .modal-buttons {
@@ -2912,9 +2929,9 @@ textarea {
 
 /* Add styles for very small screens */
 @media (max-width: 480px) {
-  .container {
+  /* .container {
     padding: 8px;
-  }
+  } */
 
   h1 {
     font-size: 1.1rem;
@@ -2922,6 +2939,8 @@ textarea {
 
   .expense-summary {
     font-size: 13px;
+    flex-direction: row;
+    margin-top: 0px;
   }
 
   .tab-button {
@@ -2942,12 +2961,27 @@ textarea {
 @media (max-width: 480px) {
   .pending-expenses-list .expense-actions {
     flex-direction: row;
-    width: 100%;
+    width: 60%;
   }
 
   .pending-expenses-list .complete-button,
   .pending-expenses-list .delete-button {
     flex: 1;
     text-align: center;
+  }
+  #planning-pending-list {
+    padding: 10px;
+  }
+
+  .priority-badge {
+   font-size: 8px;
+   padding: 2px 4px;
+   margin-right: 6px;
+  }
+  .expense-summary{
+    align-items: center;
+  }
+  .pending-expenses-list .priority-badge {
+    font-size: 8px;
   }
 }

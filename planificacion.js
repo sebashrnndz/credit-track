@@ -1276,7 +1276,7 @@ function renderMonthBalanceItem(monthData, isCurrentMonth = false) {
                                       .map(
                                         (detail) => `
                                         <div class="expense-detail-item">
-                                            <span>${detail.name} <span class="priority-badge ${detail.priority}">${getPriorityText(detail.priority)}</span></span>
+                                            <span><span class="priority-badge ${detail.priority}">${getPriorityText(detail.priority)}</span>${detail.name} </span>
                                             <span>$${formatCurrency(detail.amount)}</span>
                                         </div>
                                     `,
