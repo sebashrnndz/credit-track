@@ -68,8 +68,8 @@ input {
 }
 
 .btn-primary {
-  background-color: #023C70;
-  color: white;
+  background-color: #0664b652;
+  color: #025196;
   border: none;
   padding: 10px 15px;
   border-radius: 4px;
@@ -80,7 +80,7 @@ input {
 }
 
 .btn-primary:hover {
-  background-color: #012646;
+  background-color: #023d7075;
 }
 
 .btn-secondary {
@@ -159,7 +159,7 @@ input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
+  padding: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -191,7 +191,7 @@ input {
   transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease;
   background-color: #f8f9fa;
   border-radius: 4px;
-  margin: 0 0 0 15px;
+  /* margin: 0 0 0 15px; */
   padding: 0 20px;
 }
 
@@ -449,11 +449,12 @@ input {
   padding: 0;
   margin-bottom: 20px;
   overflow: hidden;
-  border-left: 4px solid #27ae60;
+  border-left: 4px solid #105C29;
 }
 
 .completed-expense-header {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
@@ -517,7 +518,7 @@ input {
   display: none;
   background-color: #fff;
   border-radius: 0 0 8px 8px;
-  /* padding: 20px; */
+  padding: 10px;
 }
 
 .tab-content.active {
@@ -693,11 +694,11 @@ input {
 }
 
 .planning-btn {
-  background-color: #023C70;
+  /* background-color: #023C70; */
 }
 
 .planning-btn:hover {
-  background-color: #012a50;
+  /* background-color: #012a50; */
 }
 
 .planning-filters {
@@ -957,8 +958,8 @@ textarea {
 }
 
 .complete-button {
-  background-color: #023d7052;
-  color: #023C70;
+  background-color: #0664b652;
+  color: #025196;
   /* border: 1px solid #023C70; */
   padding: 5px 10px;
   border-radius: 4px;
@@ -1363,14 +1364,17 @@ textarea {
 
 .success-icon {
   font-size: 3rem;
-  color: #27ae60;
+  /* color: #27ae60; */
   margin-bottom: 15px;
-  background-color: #e8f5e9;
+  /* background-color: #e8f5e9; */
   width: 80px;
   height: 80px;
   line-height: 80px;
   border-radius: 50%;
   margin: 0 auto 20px;
+
+  background-color: #0664b652;
+  color: #025196;
 }
 
 .close-success {
@@ -1780,7 +1784,7 @@ no-income-warning
 }
 
 .delete-income-btn:hover {
-  background-color: #c0392b;
+  background-color: #c03a2b62;
 }
 
 .income-month-summary {
@@ -2212,7 +2216,7 @@ no-income-warning
 
 .custom-checkbox .checkmark:after {
   left: 6px;
-  top: 3px;
+  top: 2px;
   width: 5px;
   height: 10px;
   border: solid white;
@@ -2914,7 +2918,7 @@ no-income-warning
 
   .expense-actions {
     /* margin-top: 10px; */
-    padding-bottom: 10px;
+    padding-bottom: 4px;
   }
 
   .modal-buttons {
@@ -2968,20 +2972,34 @@ no-income-warning
   .pending-expenses-list .delete-button {
     flex: 1;
     text-align: center;
+   font-size: 8px;
   }
   #planning-pending-list {
     padding: 10px;
+  }
+  .delete-button {
+    font-size: 8px;
+  }
+  .complete-button{
+    font-size: 8px;
   }
 
   .priority-badge {
    font-size: 8px;
    padding: 2px 4px;
    margin-right: 6px;
+   margin-left: 6px;
   }
   .expense-summary{
     align-items: center;
   }
   .pending-expenses-list .priority-badge {
     font-size: 8px;
+  }
+  .expense-header{
+   gap: 0px;
+  }
+  .expense-summary {
+    gap: 0px;
   }
 }

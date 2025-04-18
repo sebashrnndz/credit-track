@@ -1290,7 +1290,7 @@ function renderMonthBalanceItem(monthData, isCurrentMonth = false) {
                     </div>
                     <div class="expense-breakdown-total">
                         <span>Total Gastos:</span>
-                        <span>$${formatCurrency(monthData.totalAmount)}</span>
+                        <span class="total-gastos-mensual">$${formatCurrency(monthData.totalAmount)}</span>
                     </div>
                 </div>
                 
@@ -1474,10 +1474,10 @@ function showSuccessModalWithTourContinue(title, message, nextStep) {
     })
   } else {
     // Si no existe el footer, crear uno nuevo
-    const newFooter = document.createElement("div")
-    newFooter.className = "success-modal-footer"
-    newFooter.appendChild(continueButton)
-    newFooter.appendChild(successOk.cloneNode(true))
+    // const newFooter = document.createElement("div")
+    // newFooter.className = "success-modal-footer"
+    // newFooter.appendChild(continueButton)
+    // newFooter.appendChild(successOk.cloneNode(true))
 
     // Actualizar el contenido del modal
     const modalContent = successModal.querySelector(".modal-content")
