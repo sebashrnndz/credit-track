@@ -645,7 +645,7 @@ function renderExpensesList(expenses, container) {
               <div class="expense-summary-item priority-badge ${expense.priority}">${getPriorityText(expense.priority)}</div>
               <div class="expense-actions">
                   <button class="complete-button ${expense.completed ? "completed" : ""}" onclick="toggleCompleteExpense('${expense.id}', event)">
-                      ${expense.completed ? "Completado" : "Marcar Completado"}
+                      ${expense.completed ? "Restaurar" : "Marcar Completado"}
                   </button>
                   <button class="delete-button" onclick="confirmDeletePlannedExpense('${expense.id}', event)">Eliminar</button>
               </div>
@@ -726,7 +726,7 @@ function toggleCompleteExpense(expenseId, event) {
     wasCompleted ? "Gasto Reactivado" : "Gasto Completado",
     wasCompleted
       ? `El gasto "${plannedExpenses[expenseIndex].name}" ha sido marcado como pendiente.`
-      : `El gasto "${plannedExpenses[expenseIndex].name}" ha sido marcado como completado.`,
+      : `El gasto "${plannedExpenses[expenseIndex].name}" ha sido marcado como completado. Para revertir este cambio "Gastos Completados".`,
   )
 }
 
@@ -1480,18 +1480,18 @@ function showSuccessModalWithTourContinue(title, message, nextStep) {
     // newFooter.appendChild(successOk.cloneNode(true))
 
     // Actualizar el contenido del modal
-    const modalContent = successModal.querySelector(".modal-content")
-    modalContent.appendChild(newFooter)
+    // const modalContent = successModal.querySelector(".modal-content")
+    // modalContent.appendChild(newFooter)
 
-    // Añadir event listeners
-    newFooter.querySelector("#success-ok").addEventListener("click", () => {
-      successModal.style.display = "none"
-    })
+    // // Añadir event listeners
+    // newFooter.querySelector("#success-ok").addEventListener("click", () => {
+    //   successModal.style.display = "none"
+    // })
 
-    continueButton.addEventListener("click", () => {
-      successModal.style.display = "none"
-      continueTour(nextStep)
-    })
+    // continueButton.addEventListener("click", () => {
+    //   successModal.style.display = "none"
+    //   continueTour(nextStep)
+    // })
   }
 
   successModal.style.display = "block"

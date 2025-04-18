@@ -398,6 +398,7 @@ function updateDebtSummary() {
             </div>
         </div>
   `
+  console.dir(Number(formatCurrency(totalPendingDebt)));
 
   // Clear and set the debt summary
   debtSummary.innerHTML = summaryHTML

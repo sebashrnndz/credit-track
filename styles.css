@@ -974,7 +974,8 @@ textarea {
 }
 
 .complete-button.completed {
-  background-color: #95a5a6;
+  background-color: #777a7a70;
+  color:rgb(65, 65, 65)
 }
 
 .category-breakdown,
@@ -2348,6 +2349,19 @@ no-income-warning
   font-size: 13px;
   white-space: nowrap;
 }
+.dolar-compra {
+  color: #105C29;
+  background-color: #1373331c;
+  border-radius: 10px ;
+  margin: 10px;
+}
+
+.dolar-venta {
+  color: #105C29;
+  background-color: #1373331c;
+  border-radius: 10px ;
+  margin: 10px;
+}
 /* Media queries para la página de bienvenida */
 
 /* Ajustes para la vista móvil */
@@ -2978,10 +2992,10 @@ no-income-warning
     padding: 10px;
   }
   .delete-button {
-    font-size: 8px;
+    font-size: 10px;
   }
   .complete-button{
-    font-size: 8px;
+    font-size: 10px;
   }
 
   .priority-badge {

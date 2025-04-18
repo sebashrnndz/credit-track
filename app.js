@@ -364,3 +364,15 @@ function checkTourContinuation() {
   }
 }
 
+// convertir a USD
+fetch('https://dolarapi.com/v1/dolares/oficial')
+                .then(response => response.json())
+                .then(dolar => {
+                  const dolarCompra = dolar.compra;
+                  const dolarVenta = dolar.venta;
+                  const compra = document.querySelector('.dolar-compra');
+                  const venta = document.querySelector('.dolar-venta');
+                  compra.innerHTML = `<strong>Compra:</strong> ARS$ ${dolarCompra.toFixed(2)}`;
+                  venta.innerHTML = `<strong>Venta:</strong> ARS$ ${dolarVenta.toFixed(2)}`;
+                })
+
