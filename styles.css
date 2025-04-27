@@ -609,7 +609,7 @@ input {
   transition: background-color 0.3s, transform 0.2s;
   border: none;
   cursor: pointer;
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .app-button:hover {
@@ -1920,7 +1920,8 @@ no-income-warning
 .app-buttons {
   display: flex;
   gap: 15px;
-  margin-top: 30px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   justify-content: center;
 }
 
